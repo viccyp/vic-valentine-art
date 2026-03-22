@@ -1,9 +1,9 @@
 /**
- * Credits playlist + bottom dock via Spotify iFrame API.
+ * Credits playlist + hidden Spotify embed via iFrame API.
  * https://developer.spotify.com/documentation/embeds/references/iframe-api
  *
  * Tracks are read from #credits-playlist when that block exists; otherwise the
- * last parsed list (or DEFAULT_TRACKS on first paint) keeps the dock usable site-wide.
+ * last parsed list (or DEFAULT_TRACKS on first paint) keeps the embed usable site-wide.
  */
 if (typeof window !== 'undefined' && !window.__vvMusicSpotifyBundleLoaded) {
     window.__vvMusicSpotifyBundleLoaded = true;
@@ -38,10 +38,6 @@ if (typeof window !== 'undefined' && !window.__vvMusicSpotifyBundleLoaded) {
             return 'spotify:track:' + id;
         }
 
-        function spotifyWebUrl(id) {
-            return 'https://open.spotify.com/track/' + id;
-        }
-
         /** When #credits-playlist is in the document, replace `tracks` from markup. */
         function syncTracksFromDom() {
             var root = document.getElementById('credits-playlist');
@@ -72,43 +68,6 @@ if (typeof window !== 'undefined' && !window.__vvMusicSpotifyBundleLoaded) {
             if (currentIndex >= tracks.length) currentIndex = -1;
         }
 
-        function formatMs(ms) {
-            if (ms == null || !Number.isFinite(ms)) return '0:00';
-            var s = Math.floor(ms / 1000);
-            var m = Math.floor(s / 60);
-            var r = s % 60;
-            return m + ':' + (r < 10 ? '0' : '') + r;
-        }
-
-        function setOpenLink(id) {
-            var a = $('#music-dock-open');
-            if (!a) return;
-            if (!id) {
-                a.href = '#';
-                a.setAttribute('aria-hidden', 'true');
-                a.style.visibility = 'hidden';
-                return;
-            }
-            a.href = spotifyWebUrl(id);
-            a.setAttribute('aria-hidden', 'false');
-            a.style.visibility = '';
-        }
-
-        function setNowPlayingMeta(track) {
-            var titleEl = $('#music-dock-title');
-            var artistEl = $('#music-dock-artist');
-            if (titleEl) titleEl.textContent = track ? track.title : '—';
-            if (artistEl) artistEl.textContent = track ? track.artist : '—';
-            setOpenLink(track ? track.id : null);
-        }
-
-        function setLivePanelVisible(show) {
-            var dock = $('#music-now-playing');
-            if (!dock) return;
-            dock.classList.toggle('music-now-playing--live', show);
-            dock.setAttribute('aria-hidden', show ? 'false' : 'true');
-        }
-
         function syncRowButtons(data) {
             var playingNow = data.isPaused === false;
             $$('.music-credit-play').forEach(function (btn, i) {
@@ -131,19 +90,7 @@ if (typeof window !== 'undefined' && !window.__vvMusicSpotifyBundleLoaded) {
         function resetDockUi() {
             expectPlayingAfterLoadUntil = 0;
             lastPlayback = { isPaused: true, position: 0, duration: 0 };
-            var fill = $('#music-dock-progress-fill');
-            if (fill) fill.style.width = '0%';
-            var cur = $('#music-dock-time-current');
-            var tot = $('#music-dock-time-total');
-            if (cur) cur.textContent = '0:00';
-            if (tot) tot.textContent = '0:00';
-            var mainPlay = $('#music-dock-play');
-            if (mainPlay) {
-                mainPlay.classList.remove('music-dock-play--playing');
-                mainPlay.setAttribute('aria-label', 'Play');
-            }
             syncRowButtons({ isPaused: true });
-            setLivePanelVisible(false);
         }
 
         function onPlaybackUpdate(e) {
@@ -166,26 +113,7 @@ if (typeof window !== 'undefined' && !window.__vvMusicSpotifyBundleLoaded) {
             ) {
                 rowPaused = false;
             }
-            var fill = $('#music-dock-progress-fill');
-            if (fill) {
-                if (data.duration > 0) {
-                    var pct = Math.min(100, (data.position / data.duration) * 100);
-                    fill.style.width = pct + '%';
-                } else {
-                    fill.style.width = '0%';
-                }
-            }
-            var cur = $('#music-dock-time-current');
-            var tot = $('#music-dock-time-total');
-            if (cur) cur.textContent = formatMs(data.position);
-            if (tot) tot.textContent = formatMs(data.duration);
-            var mainPlay = $('#music-dock-play');
-            if (mainPlay) {
-                mainPlay.classList.toggle('music-dock-play--playing', data.isPaused === false);
-                mainPlay.setAttribute('aria-label', data.isPaused === false ? 'Pause' : 'Play');
-            }
             syncRowButtons({ isPaused: rowPaused });
-            setLivePanelVisible(data.isPaused === false && currentIndex >= 0);
         }
 
         function playIndex(i, opts) {
@@ -201,7 +129,6 @@ if (typeof window !== 'undefined' && !window.__vvMusicSpotifyBundleLoaded) {
             }
 
             currentIndex = idx;
-            setNowPlayingMeta(track);
             expectPlayingAfterLoadUntil = Date.now() + 1200;
             syncRowButtons({ isPaused: false });
             controller.loadUri(spotifyUri(track.id));
@@ -239,36 +166,6 @@ if (typeof window !== 'undefined' && !window.__vvMusicSpotifyBundleLoaded) {
                     else playIndex(currentIndex + 1);
                     return;
                 }
-                if (e.target.closest('#music-dock-play')) {
-                    if (!controller) return;
-                    if (currentIndex < 0) playIndex(0);
-                    else controller.togglePlay();
-                    return;
-                }
-                if (e.target.closest('#music-dock-prev')) {
-                    if (!controller) return;
-                    if (currentIndex < 0) playIndex(tracks.length - 1);
-                    else playIndex(currentIndex - 1);
-                    return;
-                }
-                if (e.target.closest('#music-dock-next')) {
-                    if (!controller) return;
-                    if (currentIndex < 0) playIndex(0);
-                    else playIndex(currentIndex + 1);
-                    return;
-                }
-                var bar = e.target.closest('#music-dock-progress');
-                if (bar) {
-                    if (!controller || !lastPlayback.duration) return;
-                    var rect = bar.getBoundingClientRect();
-                    var x = e.clientX - rect.left;
-                    var p = Math.max(0, Math.min(1, x / rect.width));
-                    var sec = Math.floor((p * lastPlayback.duration) / 1000);
-                    try {
-                        controller.seek(sec);
-                    } catch (_) { /* not all embed states support seek */ }
-                    return;
-                }
                 var credBtn = e.target.closest('#credits-playlist .music-credit-play');
                 if (credBtn) {
                     var li = credBtn.closest('li[data-track-index]');
@@ -285,13 +182,11 @@ if (typeof window !== 'undefined' && !window.__vvMusicSpotifyBundleLoaded) {
             embedController.addListener('playback_update', onPlaybackUpdate);
             embedController.addListener('playback_started', function () {
                 syncRowButtons({ isPaused: false, position: 0, duration: 0 });
-                if (currentIndex >= 0) setLivePanelVisible(true);
             });
             try {
                 embedController.pause();
             } catch (_) { /* ignore */ }
             currentIndex = -1;
-            setNowPlayingMeta(null);
             resetDockUi();
         }
 

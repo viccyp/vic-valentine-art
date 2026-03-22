@@ -51,7 +51,7 @@
         <section class="hero hero--split hero--below-video">
             <div class="container hero__split">
                 <figure class="hero__media hero-reveal">
-                    <img src="/public/vic.jpg" alt="Vic Valentine" width="560" height="747">
+                    <img src="/public/vic.JPG" alt="Vic Valentine" width="560" height="747">
                 </figure>
                 <div class="hero__content">
                     <div class="hero-reveal hero-reveal--copy">
@@ -106,40 +106,9 @@
     <footer class="footer">
         <div class="container"><p>&copy; 2026 Vic Valentine. All rights reserved.</p></div>
     </footer>
-    <div id="music-dock" class="music-dock">
-        <div class="music-spotify-embed-anchor-wrap" aria-hidden="true">
+    <div id="music-dock" class="music-dock music-dock--embed-only" aria-hidden="true">
+        <div class="music-spotify-embed-anchor-wrap">
             <div id="music-spotify-embed-anchor"></div>
-        </div>
-        <div class="music-now-playing" id="music-now-playing" role="region" aria-label="Now playing" aria-hidden="true">
-            <div class="music-now-playing__signal">
-                <span class="music-on-air-dot" aria-hidden="true"></span>
-            </div>
-            <div class="music-now-playing__meta">
-                <span class="music-now-playing__title" id="music-dock-title">—</span>
-                <span class="music-now-playing__artist" id="music-dock-artist">—</span>
-            </div>
-            <div class="music-now-playing__controls">
-                <div class="music-now-playing__transport">
-                    <button type="button" class="music-dock-btn" id="music-dock-prev" aria-label="Previous track">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 5v14L5 12l9-7z"/></svg>
-                    </button>
-                    <button type="button" class="music-dock-btn music-dock-btn--play" id="music-dock-play" aria-label="Pause">
-                        <svg class="music-dock-btn__play" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-                        <svg class="music-dock-btn__pause" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6V5zm8 0h4v14h-4V5z"/></svg>
-                    </button>
-                    <button type="button" class="music-dock-btn" id="music-dock-next" aria-label="Next track">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l9-7-9-7z"/></svg>
-                    </button>
-                </div>
-                <a class="music-dock-open" id="music-dock-open" href="#" target="_blank" rel="noopener noreferrer" aria-hidden="true" style="visibility:hidden">Spotify</a>
-            </div>
-            <div class="music-dock-progress" id="music-dock-progress">
-                <div class="music-dock-progress__fill" id="music-dock-progress-fill"></div>
-            </div>
-            <div class="music-dock-times">
-                <span id="music-dock-time-current">0:00</span>
-                <span id="music-dock-time-total">0:00</span>
-            </div>
         </div>
     </div>
     <div class="lightbox" id="lightbox">
