@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    { "source": "/films.html", "destination": "/film/", "permanent": true },
+    { "source": "/films", "destination": "/film/", "permanent": true },
+    { "source": "/films/", "destination": "/film/", "permanent": true },
+    { "source": "/art", "destination": "/film/", "permanent": true },
+    { "source": "/art/", "destination": "/film/", "permanent": true },
+    { "source": "/music.html", "destination": "/music/", "permanent": true },
+    { "source": "/blog.html", "destination": "/blog/", "permanent": true },
+    { "source": "/post.html", "destination": "/post/", "permanent": true },
+    { "source": "/admin/login.html", "destination": "/admin/login/", "permanent": true },
+    { "source": "/admin/edit.html", "destination": "/admin/edit/", "permanent": true }
+  ]
+}

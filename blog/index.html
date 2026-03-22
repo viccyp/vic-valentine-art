@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#010101">
+    <title>Blog — Vic Valentine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Datatype:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav class="nav">
+        <div class="container nav__inner">
+            <div class="nav__spacer" aria-hidden="true"></div>
+            <div class="nav__center">
+                <div class="nav__links">
+                    <a href="/">Home</a>
+                    <a href="/film/">Film</a>
+                    <a href="/music/">Music</a>
+                    <a href="/blog/">Blog</a>
+                </div>
+            </div>
+            <div class="nav__trailing">
+                <button type="button" class="nav__hamburger" aria-label="Menu" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+        <a href="/admin/" class="nav__admin-icon" aria-label="Admin" title="Admin">
+            <svg class="nav__admin-icon__svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="9" rx="1.2"/>
+                <rect x="14" y="3" width="7" height="5" rx="1.2"/>
+                <rect x="14" y="12" width="7" height="9" rx="1.2"/>
+                <rect x="3" y="16" width="7" height="5" rx="1.2"/>
+            </svg>
+        </a>
+    </nav>
+
+    <main>
+        <section class="section" style="padding-top: calc(var(--nav-height) + 4rem);">
+            <div class="container">
+                <div class="section__header">
+                    <h2>Blog</h2>
+                    <p>Photoblogs, travel notes, and behind-the-scenes from Vic Valentine’s shoots.</p>
+                </div>
+                <div class="blog-list" id="blog-list">
+                    <p style="text-align: center; color: var(--color-text-muted);">Loading&hellip;</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container"><p>&copy; 2026 Vic Valentine. All rights reserved.</p></div>
+    </footer>
+
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox__close" aria-label="Close">&times;</button>
+        <button class="lightbox__nav lightbox__nav--prev" aria-label="Previous">&#8249;</button>
+        <button class="lightbox__nav lightbox__nav--next" aria-label="Next">&#8250;</button>
+        <img src="" alt="">
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="/static/js/config.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (async () => {
+        const list = document.getElementById('blog-list');
+        const { data: posts, error } = await db.from('posts').select('*').eq('published', 1).order('created_at', { ascending: false });
+        if (error || !posts || !posts.length) {
+            list.innerHTML = '<p style="text-align:center;color:var(--color-text-muted);">No blog posts yet.</p>';
+            return;
+        }
+        list.innerHTML = posts.map(p => `
+            <a href="/post/?slug=${encodeURIComponent(p.slug)}" class="blog-card">
+                <div class="blog-card__image">
+                    <img src="${p.cover_image ? storageUrl(p.cover_image) : 'https://placehold.co/800x500/1a1a1a/333?text=No+Cover'}" alt="${escHtml(p.cover_alt || '')}">
+                </div>
+                <div class="blog-card__body">
+                    <div class="blog-card__date">${(p.created_at || '').slice(0, 10)}</div>
+                    <h3>${escHtml(p.title)}</h3>
+                    <p>${plainExcerpt(p.body, 180)}</p>
+                </div>
+            </a>`).join('');
+    })();
+    </script>
+</body>
+</html>

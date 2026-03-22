@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#010101">
+    <title>Edit Post — Vic Valentine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Datatype:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script src="/static/js/block-editor.js"></script>
+</head>
+<body>
+    <nav class="nav">
+        <div class="container nav__inner">
+            <div class="nav__spacer" aria-hidden="true"></div>
+            <div class="nav__center">
+                <div class="nav__links">
+                    <a href="/">Home</a>
+                    <a href="/film/">Film</a>
+                    <a href="/music/">Music</a>
+                    <a href="/blog/">Blog</a>
+                </div>
+            </div>
+            <div class="nav__trailing">
+                <button type="button" class="nav__hamburger" aria-label="Menu" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+        <a href="/admin/" class="nav__admin-icon" aria-label="Admin" title="Admin">
+            <svg class="nav__admin-icon__svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="9" rx="1.2"/>
+                <rect x="14" y="3" width="7" height="5" rx="1.2"/>
+                <rect x="14" y="12" width="7" height="9" rx="1.2"/>
+                <rect x="3" y="16" width="7" height="5" rx="1.2"/>
+            </svg>
+        </a>
+    </nav>
+
+    <main>
+        <div class="admin-layout">
+            <div class="container" style="max-width: 960px;">
+                <div class="admin-header">
+                    <h2 id="page-title">New Post</h2>
+                    <a href="/admin/" class="btn btn--outline btn--small">Back</a>
+                </div>
+
+                <form id="post-form">
+                    <div class="form-group">
+                        <label for="title">Title</label>
+                        <input type="text" id="title" required>
+                    </div>
+
+                    <div class="form-group">
+                        <div class="block-card block-card--cover">
+                            <div class="block-card__header">
+                                <span class="block-card__type">Cover image</span>
+                            </div>
+                            <div class="block-card__body">
+                                <p class="form-hint">Shown on the blog listing. If you skip this, the first image in the post is used.</p>
+                                <input type="hidden" id="cover_image_path" value="">
+                                <div id="cover_image_slot" class="block-image-slot"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="cover_alt">Cover Image Alt Text</label>
+                        <input type="text" id="cover_alt" placeholder="Describes the cover image used on the blog listing">
+                    </div>
+
+                    <div class="form-group">
+                        <label>Content Blocks</label>
+                        <div class="block-editor">
+                            <div class="block-editor__toolbar">
+                                <span>Add:</span>
+                                <button type="button" data-add="heading">Heading</button>
+                                <button type="button" data-add="paragraph">Paragraph</button>
+                                <button type="button" data-add="single_image">Image</button>
+                                <button type="button" data-add="image_text">Image + Description</button>
+                                <button type="button" data-add="triple_image">Three Images</button>
+                            </div>
+                            <div class="block-editor__blocks" id="blocks-container"></div>
+                        </div>
+                        <input type="hidden" id="blocks-json" value="[]">
+                    </div>
+
+                    <div class="form-group">
+                        <label style="display: inline-flex; align-items: center; gap: 0.5rem; cursor: pointer; text-transform: none; letter-spacing: 0; font-size: 0.95rem; color: var(--color-text);">
+                            <input type="checkbox" id="published">
+                            Publish
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn--primary" id="submit-btn">Create Post</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container"><p>&copy; 2026 Vic Valentine. All rights reserved.</p></div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="/static/js/config.js"></script>
+    <script>
+    let postId = null;
+    let editor;
+
+    (async () => {
+        const { data: { user } } = await db.auth.getUser();
+        if (!user) { location.href = '/admin/login/'; return; }
+
+        const container = document.getElementById('blocks-container');
+        const jsonInput = document.getElementById('blocks-json');
+        const titleInput = document.getElementById('title');
+        const coverPathInput = document.getElementById('cover_image_path');
+        const coverSlot = document.getElementById('cover_image_slot');
+
+        async function uploadCoverFile(file) {
+            if (!file || !file.type.startsWith('image/')) return;
+            const folder = slugify(titleInput.value) || 'uploads';
+            const ext = file.name.split('.').pop().toLowerCase();
+            const path = `${folder}/cover-${crypto.randomUUID()}.${ext}`;
+            const { error } = await db.storage.from(STORAGE_BUCKET).upload(path, file, { contentType: file.type });
+            if (error) {
+                showFlash('Cover upload failed: ' + error.message, 'error');
+                return;
+            }
+            coverPathInput.value = path;
+            renderCoverSlot();
+        }
+
+        function renderCoverSlot() {
+            const path = coverPathInput.value.trim();
+            coverSlot.innerHTML = '';
+            if (path) {
+                const preview = document.createElement('div');
+                preview.className = 'block-image-preview';
+                const img = document.createElement('img');
+                img.src = storageUrl(path);
+                img.alt = '';
+                const rm = document.createElement('button');
+                rm.type = 'button';
+                rm.className = 'block-image-remove';
+                rm.title = 'Remove image';
+                rm.innerHTML = '&times;';
+                rm.addEventListener('click', () => {
+                    coverPathInput.value = '';
+                    renderCoverSlot();
+                });
+                preview.appendChild(img);
+                preview.appendChild(rm);
+                coverSlot.appendChild(preview);
+                return;
+            }
+            const area = document.createElement('div');
+            area.className = 'block-image-upload';
+            const p = document.createElement('p');
+            p.innerHTML = 'Cover image &mdash; click or drag to upload';
+            const fileInput = document.createElement('input');
+            fileInput.type = 'file';
+            fileInput.accept = 'image/*';
+            fileInput.style.display = 'none';
+            area.appendChild(p);
+            area.appendChild(fileInput);
+            area.addEventListener('click', (e) => {
+                if (e.target !== fileInput) fileInput.click();
+            });
+            area.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                area.classList.add('dragover');
+            });
+            area.addEventListener('dragleave', () => area.classList.remove('dragover'));
+            area.addEventListener('drop', (e) => {
+                e.preventDefault();
+                area.classList.remove('dragover');
+                const f = e.dataTransfer.files[0];
+                if (f) uploadCoverFile(f);
+            });
+            fileInput.addEventListener('change', () => {
+                const f = fileInput.files[0];
+                if (f) uploadCoverFile(f);
+                fileInput.value = '';
+            });
+            coverSlot.appendChild(area);
+        }
+
+        const base = `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/`;
+
+        const params = new URLSearchParams(location.search);
+        postId = params.get('id') ? parseInt(params.get('id')) : null;
+
+        let initial = [];
+        if (postId) {
+            const { data: post } = await db.from('posts').select('*').eq('id', postId).single();
+            if (post) {
+                document.getElementById('title').value = post.title || '';
+                document.getElementById('cover_alt').value = post.cover_alt || '';
+                if (post.cover_image) coverPathInput.value = post.cover_image;
+                document.getElementById('published').checked = !!post.published;
+                document.getElementById('page-title').textContent = 'Edit Post';
+                document.getElementById('submit-btn').textContent = 'Update Post';
+                document.title = 'Edit Post — Vic Valentine';
+                try { initial = JSON.parse(post.body); } catch {}
+                if (!Array.isArray(initial)) initial = [];
+            }
+        }
+
+        renderCoverSlot();
+
+        editor = new BlockEditor(container, jsonInput, initial, base, titleInput);
+
+        document.querySelectorAll('.block-editor__toolbar button[data-add]').forEach(btn => {
+            btn.addEventListener('click', () => editor.addBlock(btn.dataset.add));
+        });
+    })();
+
+    document.getElementById('post-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = document.getElementById('title').value.trim();
+        if (!title) { showFlash('Title is required.', 'error'); return; }
+
+        const blocks = editor.blocks.map(b => { const { key, ...rest } = b; return rest; });
+        const body = JSON.stringify(blocks);
+        const bodyHtml = renderBlocksToHtml(blocks);
+        const slug = slugify(title);
+        const manualCover = document.getElementById('cover_image_path').value.trim();
+        const coverImage = manualCover || extractFirstImage(blocks);
+        const coverAlt = document.getElementById('cover_alt').value.trim();
+        const published = document.getElementById('published').checked ? 1 : 0;
+        const now = new Date().toISOString();
+
+        const postData = { title, slug, body, body_html: bodyHtml, cover_image: coverImage, cover_alt: coverAlt, published, updated_at: now };
+        let error;
+
+        if (postId) {
+            ({ error } = await db.from('posts').update(postData).eq('id', postId));
+        } else {
+            postData.created_at = now;
+            ({ error } = await db.from('posts').insert(postData));
+        }
+
+        if (error) {
+            showFlash('Save failed: ' + error.message, 'error');
+        } else {
+            showFlash('Post saved!', 'success');
+            setTimeout(() => { location.href = '/admin/'; }, 500);
+        }
+    });
+    </script>
+</body>
+</html>

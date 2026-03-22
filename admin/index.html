@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#010101">
+    <title>Admin Dashboard — Vic Valentine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Datatype:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav class="nav">
+        <div class="container nav__inner">
+            <div class="nav__spacer" aria-hidden="true"></div>
+            <div class="nav__center">
+                <div class="nav__links">
+                    <a href="/">Home</a>
+                    <a href="/film/">Film</a>
+                    <a href="/music/">Music</a>
+                    <a href="/blog/">Blog</a>
+                </div>
+            </div>
+            <div class="nav__trailing">
+                <button type="button" class="nav__hamburger" aria-label="Menu" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+        <a href="/admin/" class="nav__admin-icon" aria-label="Admin" title="Admin">
+            <svg class="nav__admin-icon__svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="9" rx="1.2"/>
+                <rect x="14" y="3" width="7" height="5" rx="1.2"/>
+                <rect x="14" y="12" width="7" height="9" rx="1.2"/>
+                <rect x="3" y="16" width="7" height="5" rx="1.2"/>
+            </svg>
+        </a>
+    </nav>
+
+    <main>
+        <div class="admin-layout">
+            <div class="container">
+                <div class="admin-header">
+                    <h2>Blog Posts</h2>
+                    <div>
+                        <a href="/admin/edit/" class="btn btn--primary btn--small">New Post</a>
+                        <button id="logout-btn" class="btn btn--outline btn--small" style="margin-left: 0.5rem;">Log Out</button>
+                    </div>
+                </div>
+                <div id="posts-list">
+                    <p style="color: var(--color-text-muted);">Loading&hellip;</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="footer">
+        <div class="container"><p>&copy; 2026 Vic Valentine. All rights reserved.</p></div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="/static/js/config.js"></script>
+    <script>
+    (async () => {
+        const { data: { user } } = await db.auth.getUser();
+        if (!user) { location.href = '/admin/login/'; return; }
+
+        const { data: posts } = await db.from('posts').select('*').order('created_at', { ascending: false });
+        const container = document.getElementById('posts-list');
+
+        if (!posts || !posts.length) {
+            container.innerHTML = '<p style="color: var(--color-text-muted);">No posts yet. Create your first one.</p>';
+            return;
+        }
+
+        container.innerHTML = `
+            <table class="admin-table">
+                <thead><tr><th>Title</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+                <tbody>${posts.map(p => `
+                    <tr>
+                        <td><a href="/admin/edit/?id=${p.id}">${escHtml(p.title)}</a></td>
+                        <td><span class="status-badge ${p.published ? 'status-badge--published' : 'status-badge--draft'}">${p.published ? 'Published' : 'Draft'}</span></td>
+                        <td style="color:var(--color-text-muted);font-size:0.85rem;">${(p.created_at || '').slice(0, 10)}</td>
+                        <td>
+                            <a href="/admin/edit/?id=${p.id}" style="margin-right:1rem;font-size:0.85rem;">Edit</a>
+                            <button onclick="deletePost(${p.id})" style="background:none;border:none;color:var(--color-error);font-size:0.85rem;cursor:pointer;">Delete</button>
+                        </td>
+                    </tr>`).join('')}
+                </tbody>
+            </table>`;
+    })();
+
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+        await db.auth.signOut();
+        location.href = '/';
+    });
+
+    async function deletePost(id) {
+        if (!confirm('Delete this post?')) return;
+        const { error } = await db.from('posts').delete().eq('id', id);
+        if (error) { showFlash('Delete failed: ' + error.message, 'error'); return; }
+        showFlash('Post deleted.', 'success');
+        location.reload();
+    }
+    </script>
+</body>
+</html>

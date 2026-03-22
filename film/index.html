@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#010101">
+    <title>Film — Vic Valentine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Datatype:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <nav class="nav">
+        <div class="container nav__inner">
+            <div class="nav__spacer" aria-hidden="true"></div>
+            <div class="nav__center">
+                <div class="nav__links">
+                    <a href="/">Home</a>
+                    <a href="/film/">Film</a>
+                    <a href="/music/">Music</a>
+                    <a href="/blog/">Blog</a>
+                </div>
+            </div>
+            <div class="nav__trailing">
+                <button type="button" class="nav__hamburger" aria-label="Menu" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+        <a href="/admin/" class="nav__admin-icon" aria-label="Admin" title="Admin">
+            <svg class="nav__admin-icon__svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="9" rx="1.2"/>
+                <rect x="14" y="3" width="7" height="5" rx="1.2"/>
+                <rect x="14" y="12" width="7" height="9" rx="1.2"/>
+                <rect x="3" y="16" width="7" height="5" rx="1.2"/>
+            </svg>
+        </a>
+    </nav>
+
+    <main>
+        <section class="section section--art section--art-flush">
+            <div class="art-hero" role="region" aria-label="Istanbul 2">
+                <video class="art-hero__media" autoplay muted loop playsinline preload="auto" tabindex="-1" disablepictureinpicture controlslist="nodownload nofullscreen noremoteplayback" aria-label="Istanbul 2">
+                    <source src="/public/istanbul2.mp4" type="video/mp4">
+                    <p class="art-hero__fallback">Your browser can't play this video inline. <a href="/public/istanbul2.mp4">Download Istanbul 2 (MP4)</a></p>
+                </video>
+            </div>
+
+            <div class="art-hero" role="region" aria-label="Barbican">
+                <video class="art-hero__media" autoplay muted loop playsinline preload="auto" tabindex="-1" disablepictureinpicture controlslist="nodownload nofullscreen noremoteplayback" aria-label="Barbican">
+                    <source src="/public/barbican.mp4" type="video/mp4">
+                    <p class="art-hero__fallback">Your browser can't play this video inline. <a href="/public/barbican.mp4">Download Barbican (MP4)</a></p>
+                </video>
+            </div>
+
+            <div class="container art-page__videos">
+                <div class="video-grid">
+                    <article class="video-card">
+                        <div class="video-card__embed">
+                            <iframe
+                                src="https://www.youtube.com/embed/mAMI1-DvpKs"
+                                title="YouTube — embedded video"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                referrerpolicy="strict-origin-when-cross-origin"
+                                allowfullscreen
+                                loading="lazy"></iframe>
+                        </div>
+                        <div class="video-card__body">
+                            <h3>Placeholder title</h3>
+                            <p>Placeholder description for this piece. <a href="https://www.youtube.com/watch?v=mAMI1-DvpKs" rel="noopener noreferrer" target="_blank">Open on YouTube</a></p>
+                        </div>
+                    </article>
+                    <article class="video-card">
+                        <div class="video-card__embed" aria-hidden="true"></div>
+                        <div class="video-card__body">
+                            <h3>Placeholder title</h3>
+                            <p>Placeholder description for this piece.</p>
+                        </div>
+                    </article>
+                    <article class="video-card">
+                        <div class="video-card__embed" aria-hidden="true"></div>
+                        <div class="video-card__body">
+                            <h3>Placeholder title</h3>
+                            <p>Placeholder description for this piece.</p>
+                        </div>
+                    </article>
+                    <article class="video-card">
+                        <div class="video-card__embed" aria-hidden="true"></div>
+                        <div class="video-card__body">
+                            <h3>Placeholder title</h3>
+                            <p>Placeholder description for this piece.</p>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container"><p>&copy; 2026 Vic Valentine. All rights reserved.</p></div>
+    </footer>
+
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox__close" aria-label="Close">&times;</button>
+        <button class="lightbox__nav lightbox__nav--prev" aria-label="Previous">&#8249;</button>
+        <button class="lightbox__nav lightbox__nav--next" aria-label="Next">&#8250;</button>
+        <img src="" alt="">
+    </div>
+
+    <script src="/static/js/config.js"></script>
+    <script src="/static/js/main.js"></script>
+</body>
+</html>

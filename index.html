@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#010101">
+    <title>Home — Vic Valentine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Datatype:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body class="home">
+    <div class="page-bg-video" aria-hidden="true">
+        <video class="page-bg-video__media" autoplay muted loop playsinline preload="auto" tabindex="-1" disablepictureinpicture controlslist="nodownload nofullscreen noremoteplayback">
+            <source src="/public/istanbul.mp4" type="video/mp4">
+        </video>
+        <div class="page-bg-video__veil"></div>
+    </div>
+    <nav class="nav">
+        <div class="container nav__inner">
+            <div class="nav__spacer" aria-hidden="true"></div>
+            <div class="nav__center">
+                <div class="nav__links">
+                    <a href="/">Home</a>
+                    <a href="/film/">Film</a>
+                    <a href="/music/">Music</a>
+                    <a href="/blog/">Blog</a>
+                </div>
+            </div>
+            <div class="nav__trailing">
+                <button type="button" class="nav__hamburger" aria-label="Menu" aria-expanded="false">
+                    <span></span><span></span><span></span>
+                </button>
+            </div>
+        </div>
+        <a href="/admin/" class="nav__admin-icon" aria-label="Admin" title="Admin">
+            <svg class="nav__admin-icon__svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <rect x="3" y="3" width="7" height="9" rx="1.2"/>
+                <rect x="14" y="3" width="7" height="5" rx="1.2"/>
+                <rect x="14" y="12" width="7" height="9" rx="1.2"/>
+                <rect x="3" y="16" width="7" height="5" rx="1.2"/>
+            </svg>
+        </a>
+    </nav>
+
+    <main class="home-main">
+        <div class="container home-audio home-audio--top" data-home-audio>
+            <audio class="home-audio__element" preload="metadata" src="/public/audio/home-feature.mp3"></audio>
+            <button type="button" class="home-audio__play" data-home-audio-play aria-pressed="false" aria-label="Play audio sample">
+                <svg class="home-audio__icon" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            </button>
+        </div>
+        <section class="hero hero--split hero--below-video">
+            <div class="container hero__split">
+                <figure class="hero__media hero-reveal">
+                    <img src="/public/vic.jpg" alt="Vic Valentine" width="560" height="747">
+                </figure>
+                <div class="hero__content">
+                    <div class="hero-reveal hero-reveal--copy">
+                        <h1>Vic Valentine</h1>
+                        <p class="hero__intro">Drummer, producer, bassist, filmmaker & editor, web & software developer. Based in London.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="featured" class="section">
+            <div class="container">
+                <div class="section__header">
+                    <h2>Featured Work</h2>
+                    <p>Placeholder text for featured work section.</p>
+                </div>
+                <div class="photo-grid photo-grid--cols-3">
+                    <div class="photo-card photo-card--tall" data-lightbox>
+                        <img src="https://placehold.co/800x1200/1a1a1a/333?text=Photo+1" alt="Placeholder photo 1">
+                        <div class="photo-card__overlay"><h3>Placeholder Title 1</h3></div>
+                    </div>
+                    <div class="photo-card" data-lightbox>
+                        <img src="https://placehold.co/800x600/1a1a1a/333?text=Photo+2" alt="Placeholder photo 2">
+                        <div class="photo-card__overlay"><h3>Placeholder Title 2</h3></div>
+                    </div>
+                    <div class="photo-card" data-lightbox>
+                        <img src="https://placehold.co/800x600/1a1a1a/333?text=Photo+3" alt="Placeholder photo 3">
+                        <div class="photo-card__overlay"><h3>Placeholder Title 3</h3></div>
+                    </div>
+                    <div class="photo-card" data-lightbox>
+                        <img src="https://placehold.co/800x600/1a1a1a/333?text=Photo+4" alt="Placeholder photo 4">
+                        <div class="photo-card__overlay"><h3>Placeholder Title 4</h3></div>
+                    </div>
+                    <div class="photo-card photo-card--wide" data-lightbox>
+                        <img src="https://placehold.co/1200x600/1a1a1a/333?text=Photo+5" alt="Placeholder photo 5">
+                        <div class="photo-card__overlay"><h3>Placeholder Title 5</h3></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="recent-posts" class="section section--recent-inline" style="display: none;">
+            <div class="container">
+                <div class="section__header">
+                    <h2>Recent Posts</h2>
+                    <p>Placeholder text for recent blog posts.</p>
+                </div>
+                <div class="blog-grid" id="recent-posts-grid"></div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container"><p>&copy; 2026 Vic Valentine. All rights reserved.</p></div>
+    </footer>
+
+    <div class="lightbox" id="lightbox">
+        <button class="lightbox__close" aria-label="Close">&times;</button>
+        <button class="lightbox__nav lightbox__nav--prev" aria-label="Previous">&#8249;</button>
+        <button class="lightbox__nav lightbox__nav--next" aria-label="Next">&#8250;</button>
+        <img src="" alt="">
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="/static/js/config.js"></script>
+    <script src="/static/js/main.js"></script>
+    <script>
+    (function () {
+        const bg = document.querySelector('.page-bg-video');
+        const heroSplit = document.querySelector('.hero__split');
+        const heroReveals = document.querySelectorAll('.hero-reveal');
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const maxVeilScroll = 520;
+
+        function onScroll() {
+            if (bg) {
+                const y = window.scrollY || document.documentElement.scrollTop;
+                const t = Math.min(1, y / maxVeilScroll);
+                bg.style.setProperty('--home-veil-blur', (t * 12).toFixed(2) + 'px');
+                bg.style.setProperty('--home-veil-alpha', (t * 0.38).toFixed(4));
+            }
+            if (!heroSplit || !heroReveals.length) return;
+            if (reduceMotion) {
+                heroReveals.forEach(function (el) {
+                    el.style.filter = '';
+                    el.style.opacity = '';
+                });
+                return;
+            }
+            const rect = heroSplit.getBoundingClientRect();
+            const vh = window.innerHeight || 1;
+            const blurStart = vh * 0.88;
+            const blurEnd = vh * 0.42;
+            let revealT;
+            if (rect.top >= blurStart) revealT = 0;
+            else if (rect.top <= blurEnd) revealT = 1;
+            else revealT = (blurStart - rect.top) / (blurStart - blurEnd);
+            const blurPx = (1 - revealT) * 14;
+            const opacity = 0.36 + revealT * 0.64;
+            const filter = 'blur(' + blurPx.toFixed(2) + 'px)';
+            const op = opacity.toFixed(3);
+            heroReveals.forEach(function (el) {
+                el.style.filter = filter;
+                el.style.opacity = op;
+            });
+        }
+
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll, { passive: true });
+    })();
+    </script>
+    <script>
+    (function () {
+        const wrap = document.querySelector('[data-home-audio]');
+        if (!wrap) return;
+        const audio = wrap.querySelector('.home-audio__element');
+        const btn = wrap.querySelector('[data-home-audio-play]');
+        if (!audio || !btn) return;
+
+        function setPlaying(on) {
+            wrap.classList.toggle('is-playing', on);
+            btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+            btn.setAttribute('aria-label', on ? 'Pause audio sample' : 'Play audio sample');
+        }
+
+        btn.addEventListener('click', function () {
+            if (audio.paused) {
+                audio.play().then(function () { setPlaying(true); }).catch(function () { setPlaying(false); });
+            } else {
+                audio.pause();
+                setPlaying(false);
+            }
+        });
+        audio.addEventListener('ended', function () { setPlaying(false); });
+        audio.addEventListener('pause', function () {
+            if (!audio.ended) setPlaying(false);
+        });
+    })();
+    </script>
+    <script>
+    (async () => {
+        const { data: posts } = await db.from('posts').select('*').eq('published', 1).order('created_at', { ascending: false }).limit(3);
+        if (!posts || !posts.length) return;
+        const section = document.getElementById('recent-posts');
+        const grid = document.getElementById('recent-posts-grid');
+        section.style.display = '';
+        grid.innerHTML = posts.map(p => `
+            <a href="/post/?slug=${encodeURIComponent(p.slug)}" class="blog-card">
+                <div class="blog-card__image">
+                    <img src="${p.cover_image ? storageUrl(p.cover_image) : 'https://placehold.co/800x500/1a1a1a/333?text=No+Cover'}" alt="${escHtml(p.cover_alt || '')}">
+                </div>
+                <div class="blog-card__body">
+                    <div class="blog-card__date">${(p.created_at || '').slice(0, 10)}</div>
+                    <h3>${escHtml(p.title)}</h3>
+                    <p>${plainExcerpt(p.body, 140)}</p>
+                </div>
+            </a>`).join('');
+    })();
+    </script>
+</body>
+</html>
