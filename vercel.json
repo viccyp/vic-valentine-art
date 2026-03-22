@@ -1,4 +1,7 @@
 {
+  "buildCommand": "npm run build",
+  "installCommand": "npm install",
+  "framework": null,
   "redirects": [
     { "source": "/films.html", "destination": "/visual/", "permanent": true },
     { "source": "/films", "destination": "/visual/", "permanent": true },
