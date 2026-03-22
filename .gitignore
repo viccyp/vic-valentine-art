@@ -1,0 +1,23 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Secrets (if you move Supabase keys out of config.js later)
+.env
+.env.*
+!.env.example
+
+# Node (tooling / future deps)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Vercel CLI local link
+.vercel
+
+# Logs
+*.log
+
+# Local SQLite in repo root (drop this line if you want site.db tracked)
+site.db
