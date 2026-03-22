@@ -4,11 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#010101">
-    <title>Admin Dashboard — Vic Valentine</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Datatype:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
+    <title>Admin Dashboard — Vic Valentine</title>
 </head>
 <body>
     <nav class="nav">
@@ -30,7 +30,7 @@
                 </button>
             </div>
         </div>
-        <a href="/admin/" class="nav__admin-icon" aria-label="Admin" title="Admin">
+        <a href="/admin/" class="nav__admin-icon" data-turbo="false" aria-label="Admin" title="Admin">
             <svg class="nav__admin-icon__svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <rect x="3" y="3" width="7" height="9" rx="1.2"/>
                 <rect x="14" y="3" width="7" height="5" rx="1.2"/>
@@ -39,7 +39,6 @@
             </svg>
         </a>
     </nav>
-
     <main>
         <div class="admin-layout">
             <div class="container">
@@ -56,11 +55,9 @@
             </div>
         </div>
     </main>
-
     <footer class="footer">
         <div class="container"><p>&copy; 2026 Vic Valentine. All rights reserved.</p></div>
     </footer>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="/static/js/supabase-runtime.js"></script>
     <script src="/static/js/config.js"></script>

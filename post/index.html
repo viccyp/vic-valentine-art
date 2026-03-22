@@ -6,11 +6,11 @@
     <meta name="theme-color" content="#010101">
     <script src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.12/dist/turbo.es2017-umd.js"></script>
     <script src="/static/js/turbo-persist-music-dock.js"></script>
-    <title>Loading… — Vic Valentine</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Datatype:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
+    <title>Loading… — Vic Valentine</title>
 </head>
 <body>
     <nav class="nav">
@@ -41,17 +41,14 @@
             </svg>
         </a>
     </nav>
-
     <main>
         <article class="photoblog-post" id="post-container">
             <p style="text-align:center; padding: calc(var(--nav-height) + 4rem) 2rem 4rem; color: var(--color-text-muted);">Loading&hellip;</p>
         </article>
     </main>
-
     <footer class="footer">
         <div class="container"><p>&copy; 2026 Vic Valentine. All rights reserved.</p></div>
     </footer>
-
     <div id="music-dock" class="music-dock">
         <div class="music-spotify-embed-anchor-wrap" aria-hidden="true">
             <div id="music-spotify-embed-anchor"></div>
@@ -88,14 +85,12 @@
             </div>
         </div>
     </div>
-
     <div class="lightbox" id="lightbox">
         <button class="lightbox__close" aria-label="Close">&times;</button>
         <button class="lightbox__nav lightbox__nav--prev" aria-label="Previous">&#8249;</button>
         <button class="lightbox__nav lightbox__nav--next" aria-label="Next">&#8250;</button>
         <img src="" alt="">
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="/static/js/supabase-runtime.js"></script>
     <script src="/static/js/config.js"></script>

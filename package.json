@@ -2,7 +2,7 @@
   "name": "vic-valentine-art",
   "private": true,
   "scripts": {
-    "config": "node scripts/inject-supabase-config.cjs",
-    "build": "node scripts/inject-supabase-config.cjs"
+    "build": "node scripts/build.cjs",
+    "config": "node scripts/build.cjs"
   }
 }

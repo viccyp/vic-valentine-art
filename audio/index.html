@@ -6,11 +6,11 @@
     <meta name="theme-color" content="#010101">
     <script src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.12/dist/turbo.es2017-umd.js"></script>
     <script src="/static/js/turbo-persist-music-dock.js"></script>
-    <title>Audio — Vic Valentine</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Datatype:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
+    <title>Audio — Vic Valentine</title>
 </head>
 <body class="page-audio">
     <nav class="nav">
@@ -41,7 +41,6 @@
             </svg>
         </a>
     </nav>
-
     <main>
         <section class="section section--audio">
             <div class="container">
@@ -149,7 +148,7 @@
 
                     <article class="music-block music-block--split-right music-block--monthly" id="monthly-pick">
                         <h3 class="music-block__title">Monthly pick</h3>
-                        <p class="music-block__lead">One song, album, or artist I’m enjoying at the moment, updated each month.</p>
+                        <p class="music-block__lead">One song, album, or artist I'm enjoying at the moment, updated each month.</p>
                         <p class="music-month__when"><time datetime="2026-03">March 2026</time></p>
                         <div class="music-month__card">
                             <h4 class="music-month__name"><a href="https://open.spotify.com/track/05JotEfBnpBXdpnqjCIXYU" rel="noopener noreferrer" target="_blank">Supernatural Feelings — Remix</a></h4>
@@ -188,24 +187,20 @@
             </div>
         </section>
     </main>
-
     <footer class="footer">
         <div class="container"><p>&copy; 2026 Vic Valentine. All rights reserved.</p></div>
     </footer>
-
     <div id="music-dock" class="music-dock music-dock--embed-only" aria-hidden="true">
         <div class="music-spotify-embed-anchor-wrap">
             <div id="music-spotify-embed-anchor"></div>
         </div>
     </div>
-
     <div class="lightbox" id="lightbox">
         <button class="lightbox__close" aria-label="Close">&times;</button>
         <button class="lightbox__nav lightbox__nav--prev" aria-label="Previous">&#8249;</button>
         <button class="lightbox__nav lightbox__nav--next" aria-label="Next">&#8250;</button>
         <img src="" alt="">
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="/static/js/supabase-runtime.js"></script>
     <script src="/static/js/config.js"></script>
