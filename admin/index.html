@@ -17,8 +17,10 @@
             <div class="nav__center">
                 <div class="nav__links">
                     <a href="/">Home</a>
-                    <a href="/film/">Film</a>
-                    <a href="/music/">Music</a>
+                    <a href="/visual/">Visual</a>
+                    <a href="/audio/">Audio</a>
+                    <a href="/velo/">Velo</a>
+                    <a href="/code/">Code</a>
                     <a href="/blog/">Blog</a>
                 </div>
             </div>
@@ -60,14 +62,19 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="/static/js/supabase-runtime.js"></script>
     <script src="/static/js/config.js"></script>
     <script>
     (async () => {
+        const container = document.getElementById('posts-list');
+        if (!db) {
+            container.innerHTML = '<p style="color:var(--color-text-muted);">Admin unavailable — run <code>npm run config</code> and ensure <code>.env</code> is set.</p>';
+            return;
+        }
         const { data: { user } } = await db.auth.getUser();
         if (!user) { location.href = '/admin/login/'; return; }
 
         const { data: posts } = await db.from('posts').select('*').order('created_at', { ascending: false });
-        const container = document.getElementById('posts-list');
 
         if (!posts || !posts.length) {
             container.innerHTML = '<p style="color: var(--color-text-muted);">No posts yet. Create your first one.</p>';
@@ -92,11 +99,12 @@
     })();
 
     document.getElementById('logout-btn').addEventListener('click', async () => {
-        await db.auth.signOut();
+        if (db) await db.auth.signOut();
         location.href = '/';
     });
 
     async function deletePost(id) {
+        if (!db) return;
         if (!confirm('Delete this post?')) return;
         const { error } = await db.from('posts').delete().eq('id', id);
         if (error) { showFlash('Delete failed: ' + error.message, 'error'); return; }

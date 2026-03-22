@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="theme-color" content="#010101">
+    <script src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.12/dist/turbo.es2017-umd.js"></script>
+    <script src="/static/js/turbo-persist-music-dock.js"></script>
     <title>Loading… — Vic Valentine</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -17,8 +19,10 @@
             <div class="nav__center">
                 <div class="nav__links">
                     <a href="/">Home</a>
-                    <a href="/film/">Film</a>
-                    <a href="/music/">Music</a>
+                    <a href="/visual/">Visual</a>
+                    <a href="/audio/">Audio</a>
+                    <a href="/velo/">Velo</a>
+                    <a href="/code/">Code</a>
                     <a href="/blog/">Blog</a>
                 </div>
             </div>
@@ -28,7 +32,7 @@
                 </button>
             </div>
         </div>
-        <a href="/admin/" class="nav__admin-icon" aria-label="Admin" title="Admin">
+        <a href="/admin/" class="nav__admin-icon" data-turbo="false" aria-label="Admin" title="Admin">
             <svg class="nav__admin-icon__svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <rect x="3" y="3" width="7" height="9" rx="1.2"/>
                 <rect x="14" y="3" width="7" height="5" rx="1.2"/>
@@ -48,6 +52,43 @@
         <div class="container"><p>&copy; 2026 Vic Valentine. All rights reserved.</p></div>
     </footer>
 
+    <div id="music-dock" class="music-dock">
+        <div class="music-spotify-embed-anchor-wrap" aria-hidden="true">
+            <div id="music-spotify-embed-anchor"></div>
+        </div>
+        <div class="music-now-playing" id="music-now-playing" role="region" aria-label="Now playing" aria-hidden="true">
+            <div class="music-now-playing__signal">
+                <span class="music-on-air-dot" aria-hidden="true"></span>
+            </div>
+            <div class="music-now-playing__meta">
+                <span class="music-now-playing__title" id="music-dock-title">—</span>
+                <span class="music-now-playing__artist" id="music-dock-artist">—</span>
+            </div>
+            <div class="music-now-playing__controls">
+                <div class="music-now-playing__transport">
+                    <button type="button" class="music-dock-btn" id="music-dock-prev" aria-label="Previous track">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 5v14L5 12l9-7z"/></svg>
+                    </button>
+                    <button type="button" class="music-dock-btn music-dock-btn--play" id="music-dock-play" aria-label="Pause">
+                        <svg class="music-dock-btn__play" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+                        <svg class="music-dock-btn__pause" width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M6 5h4v14H6V5zm8 0h4v14h-4V5z"/></svg>
+                    </button>
+                    <button type="button" class="music-dock-btn" id="music-dock-next" aria-label="Next track">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l9-7-9-7z"/></svg>
+                    </button>
+                </div>
+                <a class="music-dock-open" id="music-dock-open" href="#" target="_blank" rel="noopener noreferrer" aria-hidden="true" style="visibility:hidden">Spotify</a>
+            </div>
+            <div class="music-dock-progress" id="music-dock-progress">
+                <div class="music-dock-progress__fill" id="music-dock-progress-fill"></div>
+            </div>
+            <div class="music-dock-times">
+                <span id="music-dock-time-current">0:00</span>
+                <span id="music-dock-time-total">0:00</span>
+            </div>
+        </div>
+    </div>
+
     <div class="lightbox" id="lightbox">
         <button class="lightbox__close" aria-label="Close">&times;</button>
         <button class="lightbox__nav lightbox__nav--prev" aria-label="Previous">&#8249;</button>
@@ -56,15 +97,24 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="/static/js/supabase-runtime.js"></script>
     <script src="/static/js/config.js"></script>
     <script src="/static/js/main.js"></script>
+    <script src="/static/js/music-spotify-player.js"></script>
+    <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
     <script>
-    (async () => {
+    async function loadPostPage() {
         const slug = new URLSearchParams(location.search).get('slug');
-        if (!slug) { location.href = '/blog/'; return; }
+        if (!slug) { window.location.href = '/blog/'; return; }
+
+        const el = document.getElementById('post-container');
+        if (!el) return;
+        if (!db) {
+            el.innerHTML = '<p style="text-align:center; padding: calc(var(--nav-height) + 4rem) 2rem 4rem; color: var(--color-text-muted);">Post unavailable — run <code>npm run config</code> after adding a <code>.env</code> file.</p>';
+            return;
+        }
 
         const { data: post, error } = await db.from('posts').select('*').eq('slug', slug).eq('published', 1).single();
-        const el = document.getElementById('post-container');
 
         if (error || !post) {
             el.innerHTML = '<p style="text-align:center; padding: calc(var(--nav-height) + 4rem) 2rem 4rem; color: var(--color-text-muted);">Post not found.</p>';
@@ -99,7 +149,9 @@
             <div class="photoblog-post__content">
                 <div class="container container--narrow">${contentHtml}</div>
             </div>`;
-    })();
+    }
+    document.addEventListener('DOMContentLoaded', loadPostPage);
+    document.addEventListener('turbo:load', loadPostPage);
     </script>
 </body>
 </html>

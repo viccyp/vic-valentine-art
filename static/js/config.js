@@ -1,8 +1,23 @@
-const SUPABASE_URL = 'https://iliihnrgaexwlmegadns.supabase.co';
-const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlsaWlobnJnYWV4d2xtZWdhZG5zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQyMDA3MzMsImV4cCI6MjA4OTc3NjczM30.S640pduZ39G8a7UrovAeEbxmv7EUtftcfdqwqYWIgeA';
-const STORAGE_BUCKET = 'BLOGS';
+const SUPABASE_URL =
+    typeof window !== 'undefined' && window.__SUPABASE_URL__
+        ? window.__SUPABASE_URL__
+        : '';
+const SUPABASE_ANON_KEY =
+    typeof window !== 'undefined' && window.__SUPABASE_ANON_KEY__
+        ? window.__SUPABASE_ANON_KEY__
+        : '';
+const STORAGE_BUCKET =
+    typeof window !== 'undefined' && window.__SUPABASE_STORAGE_BUCKET__
+        ? window.__SUPABASE_STORAGE_BUCKET__
+        : 'ART';
 
-const db = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const db =
+    typeof window !== 'undefined' &&
+    window.supabase &&
+    SUPABASE_URL &&
+    SUPABASE_ANON_KEY
+        ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
+        : null;
 
 function storageUrl(path) {
     return path ? `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${path}` : '';
@@ -127,22 +142,33 @@ function navPathKey(pathname) {
 function initActiveNav() {
     const path = location.pathname;
     const pathKey = navPathKey(path);
-    document.querySelectorAll('.nav__links a').forEach(a => {
+    document.querySelectorAll('.nav__links a').forEach((a) => {
+        a.classList.remove('active');
         const href = a.getAttribute('href');
         if (!href || href.startsWith('http') || href.startsWith('mailto:')) return;
-        if (navPathKey(href) === pathKey) {
+        const hrefKey = navPathKey(href);
+        if (hrefKey === pathKey || (hrefKey === '/audio' && pathKey.startsWith('/audio'))) {
             a.classList.add('active');
         }
     });
+    document.querySelectorAll('.nav__admin-icon').forEach((a) => a.classList.remove('active'));
     if (path.startsWith('/admin')) {
-        document.querySelectorAll('.nav__admin-icon').forEach(a => a.classList.add('active'));
+        document.querySelectorAll('.nav__admin-icon').forEach((a) => a.classList.add('active'));
     }
-    const btn = document.querySelector('.nav__hamburger');
-    btn?.addEventListener('click', () => {
-        const links = document.querySelector('.nav__links');
+}
+
+if (typeof window !== 'undefined' && !window.__vvNavHamburgerDelegated) {
+    window.__vvNavHamburgerDelegated = true;
+    document.addEventListener('click', (e) => {
+        const btn = e.target.closest('.nav__hamburger');
+        if (!btn) return;
+        const nav = btn.closest('.nav');
+        const links = nav?.querySelector('.nav__links');
+        if (!links) return;
         const open = links.classList.toggle('open');
         btn.setAttribute('aria-expanded', open);
     });
 }
 
 document.addEventListener('DOMContentLoaded', initActiveNav);
+document.addEventListener('turbo:load', initActiveNav);

@@ -19,5 +19,8 @@ yarn-error.log*
 # Logs
 *.log
 
+# Generated from .env / CI env (npm run config)
+static/js/supabase-runtime.js
+
 # Local SQLite in repo root (drop this line if you want site.db tracked)
 site.db

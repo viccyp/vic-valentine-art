@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#010101">
     <script src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.12/dist/turbo.es2017-umd.js"></script>
     <script src="/static/js/turbo-persist-music-dock.js"></script>
-    <title>Blog — Vic Valentine</title>
+    <title>Event — Vic Valentine</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Datatype:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
@@ -43,16 +43,9 @@
     </nav>
 
     <main>
-        <section class="section" style="padding-top: calc(var(--nav-height) + 4rem);">
-            <div class="container">
-                <div class="section__header">
-                    <h2>Blog</h2>
-                </div>
-                <div class="blog-list" id="blog-list">
-                    <p style="text-align: center; color: var(--color-text-muted);">Loading&hellip;</p>
-                </div>
-            </div>
-        </section>
+        <article class="music-event" id="music-event-root">
+            <p class="music-event__loading">Loading&hellip;</p>
+        </article>
     </main>
 
     <footer class="footer">
@@ -110,36 +103,102 @@
     <script src="/static/js/music-spotify-player.js"></script>
     <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
     <script>
-    async function loadBlogList() {
-        const list = document.getElementById('blog-list');
-        if (!list) return;
+    async function loadMusicEventPage() {
+        const id = new URLSearchParams(location.search).get('id');
+        const el = document.getElementById('music-event-root');
+        if (!el) return;
+        if (!id || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
+            el.innerHTML = '<p class="music-event__empty"><a href="/audio/">Back to Audio</a></p>';
+            return;
+        }
         if (!db) {
-            list.innerHTML = '<p style="text-align:center;color:var(--color-text-muted);">Blog unavailable — run <code>npm run config</code> after adding a <code>.env</code> file.</p>';
+            el.innerHTML = '<p class="music-event__empty">Unavailable — run <code>npm run config</code>. <a href="/audio/">Back to Audio</a></p>';
             return;
         }
-        const { data: posts, error } = await db.from('posts').select('*').eq('published', 1).order('created_at', { ascending: false });
-        if (error) {
-            list.innerHTML = `<p style="text-align:center;color:var(--color-text-muted);max-width:36em;margin-inline:auto;">Could not load posts (${escHtml(error.message)}). Check the browser Network tab for <code>rest/v1/posts</code>, confirm <code>npm run build</code> on deploy creates <code>supabase-runtime.js</code>, and run <code>scripts/posts-blog-schema.sql</code> in Supabase (RLS + <code>posts</code> table).</p>`;
+
+        function absolutHttpUrl(u) {
+            if (!u || typeof u !== 'string') return '';
+            try {
+                const x = new URL(u);
+                return x.protocol === 'http:' || x.protocol === 'https:' ? x.href : '';
+            } catch (_) { return ''; }
+        }
+
+        const { data: show, error: showErr } = await db
+            .from('events')
+            .select('id, name, description, event_date, location, price, total_tickets, available_tickets, image_url, category, is_published')
+            .eq('id', id)
+            .eq('is_published', true)
+            .eq('category', 'music')
+            .maybeSingle();
+
+        if (showErr || !show) {
+            el.innerHTML = '<p class="music-event__empty">Event not found. <a href="/audio/">Back to Audio</a></p>';
             return;
         }
-        if (!posts || !posts.length) {
-            list.innerHTML = '<p style="text-align:center;color:var(--color-text-muted);">No blog posts yet. Publish a post in Admin or set <code>published = 1</code> on rows in the <code>posts</code> table.</p>';
-            return;
+
+        const { data: extraRows } = await db
+            .from('event_gallery_images')
+            .select('image_url, sort_order')
+            .eq('event_id', show.id)
+            .order('sort_order', { ascending: true });
+
+        const title = show.name || 'Event';
+        document.title = `${title} — Vic Valentine`;
+
+        const when = formatDate(show.event_date);
+        const loc = escHtml(show.location || '');
+        const desc = show.description
+            ? `<div class="music-event__description"><p>${escHtml(show.description).replace(/\n/g, '<br>')}</p></div>`
+            : '';
+
+        const priceLine = show.price != null && String(show.price).trim() !== ''
+            ? `<p class="music-event__meta-line">Price: ${escHtml(String(show.price))}</p>`
+            : '';
+        let ticketsLine = '';
+        if (show.available_tickets != null && show.total_tickets != null) {
+            ticketsLine = `<p class="music-event__meta-line">Tickets: ${escHtml(String(show.available_tickets))} left of ${escHtml(String(show.total_tickets))}</p>`;
         }
-        list.innerHTML = posts.map(p => `
-            <a href="/post/?slug=${encodeURIComponent(p.slug)}" class="blog-card">
-                <div class="blog-card__image">
-                    <img src="${p.cover_image ? storageUrl(p.cover_image) : 'https://placehold.co/800x500/1a1a1a/333?text=No+Cover'}" alt="${escHtml(p.cover_alt || '')}">
+
+        const galleryItems = [];
+        const mainImg = absolutHttpUrl(show.image_url);
+        if (mainImg) galleryItems.push({ src: mainImg, alt: title });
+        if (extraRows && extraRows.length) {
+            for (const row of extraRows) {
+                const src = absolutHttpUrl(row.image_url);
+                if (src && !galleryItems.some(g => g.src === src)) galleryItems.push({ src, alt: title });
+            }
+        }
+
+        const gallery = galleryItems.length
+            ? `<div class="music-event__gallery">
+                <h2 class="music-event__gallery-title">Gallery</h2>
+                <div class="music-event__gallery-grid">
+                    ${galleryItems.map(g => `<figure class="music-event__figure" data-lightbox><img src="${g.src}" alt="${escHtml(g.alt)}"></figure>`).join('')}
                 </div>
-                <div class="blog-card__body">
-                    <div class="blog-card__date">${(p.created_at || '').slice(0, 10)}</div>
-                    <h3>${escHtml(p.title)}</h3>
-                    <p>${plainExcerpt(p.body, 180)}</p>
+               </div>`
+            : '';
+
+        el.innerHTML = `
+            <header class="music-event__header">
+                <div class="container container--narrow">
+                    <p class="music-event__back"><a href="/audio/">← Audio</a></p>
+                    <h1 class="music-event__title">${escHtml(title)}</h1>
+                    <p class="music-event__when"><time datetime="${escHtml((show.event_date || '').slice(0, 16))}">${escHtml(when)}</time></p>
+                    <p class="music-event__location">${loc}</p>
+                    ${priceLine}
+                    ${ticketsLine}
                 </div>
-            </a>`).join('');
+            </header>
+            <div class="music-event__body">
+                <div class="container container--narrow">
+                    ${desc}
+                    ${gallery}
+                </div>
+            </div>`;
     }
-    document.addEventListener('DOMContentLoaded', loadBlogList);
-    document.addEventListener('turbo:load', loadBlogList);
+    document.addEventListener('DOMContentLoaded', loadMusicEventPage);
+    document.addEventListener('turbo:load', loadMusicEventPage);
     </script>
 </body>
 </html>

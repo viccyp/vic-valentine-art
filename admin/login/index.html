@@ -17,8 +17,10 @@
             <div class="nav__center">
                 <div class="nav__links">
                     <a href="/">Home</a>
-                    <a href="/film/">Film</a>
-                    <a href="/music/">Music</a>
+                    <a href="/visual/">Visual</a>
+                    <a href="/audio/">Audio</a>
+                    <a href="/velo/">Velo</a>
+                    <a href="/code/">Code</a>
                     <a href="/blog/">Blog</a>
                 </div>
             </div>
@@ -62,15 +64,21 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="/static/js/supabase-runtime.js"></script>
     <script src="/static/js/config.js"></script>
     <script>
     (async () => {
+        if (!db) return;
         const { data: { user } } = await db.auth.getUser();
         if (user) { location.href = '/admin/'; return; }
     })();
 
     document.getElementById('login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
+        if (!db) {
+            showFlash('Supabase is not configured. Run npm run config after adding .env.', 'error');
+            return;
+        }
         const email = document.getElementById('email').value.trim();
         const password = document.getElementById('password').value;
 

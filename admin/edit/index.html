@@ -18,8 +18,10 @@
             <div class="nav__center">
                 <div class="nav__links">
                     <a href="/">Home</a>
-                    <a href="/film/">Film</a>
-                    <a href="/music/">Music</a>
+                    <a href="/visual/">Visual</a>
+                    <a href="/audio/">Audio</a>
+                    <a href="/velo/">Velo</a>
+                    <a href="/code/">Code</a>
                     <a href="/blog/">Blog</a>
                 </div>
             </div>
@@ -105,12 +107,18 @@
     </footer>
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+    <script src="/static/js/supabase-runtime.js"></script>
     <script src="/static/js/config.js"></script>
     <script>
     let postId = null;
     let editor;
 
     (async () => {
+        if (!db) {
+            alert('Supabase is not configured. Run npm run config after adding a .env file.');
+            location.href = '/admin/login/';
+            return;
+        }
         const { data: { user } } = await db.auth.getUser();
         if (!user) { location.href = '/admin/login/'; return; }
 

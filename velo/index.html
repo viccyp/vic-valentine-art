@@ -6,13 +6,13 @@
     <meta name="theme-color" content="#010101">
     <script src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.12/dist/turbo.es2017-umd.js"></script>
     <script src="/static/js/turbo-persist-music-dock.js"></script>
-    <title>Blog — Vic Valentine</title>
+    <title>Velo — Vic Valentine</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Datatype:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
 </head>
-<body>
+<body class="page-velo">
     <nav class="nav">
         <div class="container nav__inner">
             <div class="nav__spacer" aria-hidden="true"></div>
@@ -43,13 +43,51 @@
     </nav>
 
     <main>
-        <section class="section" style="padding-top: calc(var(--nav-height) + 4rem);">
+        <section class="section section--velo">
             <div class="container">
-                <div class="section__header">
-                    <h2>Blog</h2>
+                <header class="section__header">
+                    <h2>Velo</h2>
+                    <p>Ride clips</p>
+                </header>
+
+                <div class="video-grid">
+                    <article class="video-card">
+                        <div class="video-card__embed">
+                            <iframe
+                                src="https://www.youtube.com/embed/mAMI1-DvpKs"
+                                title="YouTube — ride video"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                referrerpolicy="strict-origin-when-cross-origin"
+                                allowfullscreen
+                                loading="lazy"></iframe>
+                        </div>
+                        <div class="video-card__body">
+                            <h3>Ride clip</h3>
+                            <p><a href="https://www.youtube.com/watch?v=mAMI1-DvpKs" rel="noopener noreferrer" target="_blank">Open on YouTube</a></p>
+                        </div>
+                    </article>
                 </div>
-                <div class="blog-list" id="blog-list">
-                    <p style="text-align: center; color: var(--color-text-muted);">Loading&hellip;</p>
+
+                <div class="velo-gallery-block" hidden>
+                    <h3 class="velo-gallery-title">Photos</h3>
+                    <div class="velo-gallery">
+                        <figure class="velo-still" data-lightbox>
+                            <img src="/public/bike-01.jpg" alt="Cycling, photo 1" width="1200" height="900" loading="lazy">
+                            <figcaption class="velo-still__caption">Caption</figcaption>
+                        </figure>
+                        <figure class="velo-still" data-lightbox>
+                            <img src="/public/bike-02.jpg" alt="Cycling, photo 2" width="1200" height="900" loading="lazy">
+                            <figcaption class="velo-still__caption">Caption</figcaption>
+                        </figure>
+                        <figure class="velo-still" data-lightbox>
+                            <img src="/public/bike-03.jpg" alt="Cycling, photo 3" width="1200" height="900" loading="lazy">
+                            <figcaption class="velo-still__caption">Caption</figcaption>
+                        </figure>
+                        <figure class="velo-still" data-lightbox>
+                            <img src="/public/bike-04.jpg" alt="Cycling, photo 4" width="1200" height="900" loading="lazy">
+                            <figcaption class="velo-still__caption">Caption</figcaption>
+                        </figure>
+                    </div>
                 </div>
             </div>
         </section>
@@ -103,43 +141,9 @@
         <img src="" alt="">
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-    <script src="/static/js/supabase-runtime.js"></script>
     <script src="/static/js/config.js"></script>
     <script src="/static/js/main.js"></script>
     <script src="/static/js/music-spotify-player.js"></script>
     <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
-    <script>
-    async function loadBlogList() {
-        const list = document.getElementById('blog-list');
-        if (!list) return;
-        if (!db) {
-            list.innerHTML = '<p style="text-align:center;color:var(--color-text-muted);">Blog unavailable — run <code>npm run config</code> after adding a <code>.env</code> file.</p>';
-            return;
-        }
-        const { data: posts, error } = await db.from('posts').select('*').eq('published', 1).order('created_at', { ascending: false });
-        if (error) {
-            list.innerHTML = `<p style="text-align:center;color:var(--color-text-muted);max-width:36em;margin-inline:auto;">Could not load posts (${escHtml(error.message)}). Check the browser Network tab for <code>rest/v1/posts</code>, confirm <code>npm run build</code> on deploy creates <code>supabase-runtime.js</code>, and run <code>scripts/posts-blog-schema.sql</code> in Supabase (RLS + <code>posts</code> table).</p>`;
-            return;
-        }
-        if (!posts || !posts.length) {
-            list.innerHTML = '<p style="text-align:center;color:var(--color-text-muted);">No blog posts yet. Publish a post in Admin or set <code>published = 1</code> on rows in the <code>posts</code> table.</p>';
-            return;
-        }
-        list.innerHTML = posts.map(p => `
-            <a href="/post/?slug=${encodeURIComponent(p.slug)}" class="blog-card">
-                <div class="blog-card__image">
-                    <img src="${p.cover_image ? storageUrl(p.cover_image) : 'https://placehold.co/800x500/1a1a1a/333?text=No+Cover'}" alt="${escHtml(p.cover_alt || '')}">
-                </div>
-                <div class="blog-card__body">
-                    <div class="blog-card__date">${(p.created_at || '').slice(0, 10)}</div>
-                    <h3>${escHtml(p.title)}</h3>
-                    <p>${plainExcerpt(p.body, 180)}</p>
-                </div>
-            </a>`).join('');
-    }
-    document.addEventListener('DOMContentLoaded', loadBlogList);
-    document.addEventListener('turbo:load', loadBlogList);
-    </script>
 </body>
 </html>
