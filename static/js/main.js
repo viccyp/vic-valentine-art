@@ -168,3 +168,75 @@ function initFlashDismiss() {
 
 document.addEventListener('DOMContentLoaded', initFlashDismiss);
 document.addEventListener('turbo:load', initFlashDismiss);
+
+const VV_VIDEO_MOBILE_MQ = '(max-width: 768px)';
+
+/** Pick desktop vs mobile file (see data-desktop-src / data-mobile-src on the video). */
+function applyResponsiveHeroVideoSrc(v) {
+    const desk = v.dataset.desktopSrc;
+    const mob = v.dataset.mobileSrc;
+    if (!desk || !mob) return;
+    const useMobile = window.matchMedia(VV_VIDEO_MOBILE_MQ).matches;
+    const next = useMobile ? mob : desk;
+    if (v.dataset.vvActiveSrc === next) return;
+    v.dataset.vvActiveSrc = next;
+    v.src = next;
+    v.load();
+}
+
+/** iOS / mobile: muted autoplay often needs explicit play() + webkit-playsinline; lighter preload helps cellular. */
+function initMobileFriendlyAutoplayVideos() {
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const candidates = document.querySelectorAll('video.page-bg-video__media, video.art-hero__media');
+    candidates.forEach((v) => {
+        applyResponsiveHeroVideoSrc(v);
+        if (reduceMotion) {
+            v.removeAttribute('autoplay');
+            v.pause();
+            return;
+        }
+        v.muted = true;
+        v.defaultMuted = true;
+        v.setAttribute('muted', '');
+        v.setAttribute('playsinline', '');
+        v.setAttribute('webkit-playsinline', '');
+        if ('playsInline' in v) v.playsInline = true;
+        if (!v.preload || v.preload === 'auto') v.preload = 'metadata';
+
+        const nudge = () => {
+            const p = v.play();
+            if (p !== undefined && typeof p.catch === 'function') p.catch(() => {});
+        };
+        nudge();
+        v.addEventListener('canplay', nudge, { once: true });
+        v.addEventListener('loadeddata', nudge, { once: true });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', initMobileFriendlyAutoplayVideos);
+document.addEventListener('turbo:load', initMobileFriendlyAutoplayVideos);
+
+if (typeof window !== 'undefined' && !window.__vvVideoResizeBound) {
+    window.__vvVideoResizeBound = true;
+    let resizeTimer;
+    window.addEventListener('resize', () => {
+        clearTimeout(resizeTimer);
+        resizeTimer = setTimeout(() => initMobileFriendlyAutoplayVideos(), 200);
+    });
+}
+
+if (typeof window !== 'undefined' && !window.__vvVideoInteractionUnlock) {
+    window.__vvVideoInteractionUnlock = true;
+    const unlockVideos = () => {
+        document.querySelectorAll('video.page-bg-video__media, video.art-hero__media').forEach((v) => {
+            if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+            const p = v.play();
+            if (p !== undefined && typeof p.catch === 'function') p.catch(() => {});
+        });
+    };
+    document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') unlockVideos();
+    });
+    document.addEventListener('touchstart', unlockVideos, { passive: true, capture: true });
+    document.addEventListener('click', unlockVideos, { capture: true });
+}
