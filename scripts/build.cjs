@@ -26,10 +26,16 @@ function readPartial(name) {
 }
 
 function processIncludes(html) {
-    return html.replace(INCLUDE_RE, (_match, indent, partialPath) => {
-        const content = readPartial(partialPath);
-        return content.trimEnd();
-    });
+    let out = html;
+    let prev;
+    do {
+        prev = out;
+        out = out.replace(INCLUDE_RE, (_match, _indent, partialPath) => {
+            const content = readPartial(partialPath);
+            return content.trimEnd();
+        });
+    } while (out !== prev);
+    return out;
 }
 
 function buildPages() {

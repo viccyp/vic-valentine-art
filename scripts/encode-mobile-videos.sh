@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Re-encode hero / background MP4s for phones (720px wide, H.264, faststart, no audio).
+# Re-encode hero / background MP4s for phones (1080px wide, high quality H.264, faststart, no audio).
 # Requires: ffmpeg (brew install ffmpeg)
 set -euo pipefail
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
@@ -18,8 +18,8 @@ for name in istanbul barbican; do
   fi
   echo "Encoding $dst ..."
   "$FFMPEG" -y -i "$src" \
-    -vf "scale=720:-2" \
-    -c:v libx264 -pix_fmt yuv420p -crf 26 -preset medium \
+    -vf "scale='min(1080,iw)':-2" \
+    -c:v libx264 -pix_fmt yuv420p -crf 19 -preset slow \
     -movflags +faststart \
     -an \
     "$dst"

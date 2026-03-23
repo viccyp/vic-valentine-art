@@ -188,7 +188,19 @@
         </section>
     </main>
     <footer class="footer">
-        <div class="container"><p>&copy; 2026 Vic Valentine. All rights reserved.</p></div>
+        <div class="container">
+            <nav class="page-nav-arrows" id="page-nav-arrows" aria-label="Site sections" hidden>
+                <div class="page-nav-arrows__inner">
+                    <a class="page-nav-arrows__btn page-nav-arrows__btn--prev" href="/blog/" aria-label="Previous section">
+                        <svg class="page-nav-arrows__icon" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><polygon points="16,3 6,12 16,21"/></svg>
+                    </a>
+                    <a class="page-nav-arrows__btn page-nav-arrows__btn--next" href="/visual/" aria-label="Next section">
+                        <svg class="page-nav-arrows__icon" width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><polygon points="8,3 18,12 8,21"/></svg>
+                    </a>
+                </div>
+            </nav>
+            <p>&copy; 2026 Vic Valentine. All rights reserved.</p>
+        </div>
     </footer>
     <div id="music-dock" class="music-dock music-dock--embed-only" aria-hidden="true">
         <div class="music-spotify-embed-anchor-wrap">
@@ -204,35 +216,19 @@
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
     <script src="/static/js/supabase-runtime.js"></script>
     <script src="/static/js/config.js"></script>
+    <script src="/static/js/page-nav-arrows.js"></script>
     <script src="/static/js/main.js"></script>
     <script src="/static/js/music-spotify-player.js"></script>
     <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
     <script>
     let __vvGigsLoadGen = 0;
 
-    async function waitForSupabaseClient(maxMs) {
-        if (!window.__SUPABASE_URL__ || !window.__SUPABASE_ANON_KEY__) {
-            return typeof getDb === 'function' ? getDb() : typeof db !== 'undefined' ? db : null;
-        }
-        const t0 = Date.now();
-        let c = typeof getDb === 'function' ? getDb() : typeof db !== 'undefined' ? db : null;
-        if (c) return c;
-        while (Date.now() - t0 < maxMs) {
-            await new Promise(function (r) {
-                setTimeout(r, 45);
-            });
-            c = typeof getDb === 'function' ? getDb() : typeof db !== 'undefined' ? db : null;
-            if (c) return c;
-        }
-        return typeof getDb === 'function' ? getDb() : typeof db !== 'undefined' ? db : null;
-    }
-
     async function loadMusicGigs() {
         const gen = ++__vvGigsLoadGen;
         const root = document.getElementById('music-gigs-list');
         if (!root) return;
         root.innerHTML = '<p class="music-gig-list__loading">Loading&hellip;</p>';
-        const client = await waitForSupabaseClient(2800);
+        const client = await waitForSupabaseClient();
         if (gen !== __vvGigsLoadGen) return;
         if (!client) {
             root.innerHTML = '<p class="music-gig-list__empty">Live shows unavailable — run <code>npm run config</code> and set <code>.env</code>.</p>';

@@ -48,6 +48,26 @@ function getDb() {
     return null;
 }
 
+/**
+ * Wait until Supabase UMD + env globals are ready (avoids false "npm run config" on fast Turbo navigations).
+ */
+async function waitForSupabaseClient(maxMs = 3200) {
+    if (!window.__SUPABASE_URL__ || !window.__SUPABASE_ANON_KEY__) {
+        return getDb();
+    }
+    const t0 = Date.now();
+    let c = getDb();
+    if (c) return c;
+    while (Date.now() - t0 < maxMs) {
+        await new Promise((r) => {
+            setTimeout(r, 45);
+        });
+        c = getDb();
+        if (c) return c;
+    }
+    return getDb();
+}
+
 function storageUrl(path) {
     return path ? `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${path}` : '';
 }
