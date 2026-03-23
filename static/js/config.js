@@ -181,6 +181,84 @@ function showFlash(message, type = 'success') {
     }, 4000);
 }
 
+/**
+ * In-page confirmation (replaces window.confirm). Resolves true if confirmed.
+ * @param {{ title: string, message: string, confirmText?: string, cancelText?: string, danger?: boolean }} opts
+ */
+function confirmDialog(opts) {
+    const {
+        title,
+        message,
+        confirmText = 'OK',
+        cancelText = 'Cancel',
+        danger = false,
+    } = opts;
+    return new Promise((resolve) => {
+        const overlay = document.createElement('div');
+        overlay.className = 'confirm-dialog';
+        overlay.setAttribute('role', 'dialog');
+        overlay.setAttribute('aria-modal', 'true');
+        overlay.setAttribute('aria-labelledby', 'confirm-dialog-title');
+
+        const backdrop = document.createElement('div');
+        backdrop.className = 'confirm-dialog__backdrop';
+        backdrop.setAttribute('data-confirm-dismiss', '');
+
+        const panel = document.createElement('div');
+        panel.className = 'confirm-dialog__panel';
+
+        const h2 = document.createElement('h2');
+        h2.id = 'confirm-dialog-title';
+        h2.className = 'confirm-dialog__title';
+        h2.textContent = title;
+
+        const p = document.createElement('p');
+        p.className = 'confirm-dialog__message';
+        p.textContent = message;
+
+        const actions = document.createElement('div');
+        actions.className = 'confirm-dialog__actions';
+
+        const cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.className = 'btn btn--outline btn--small';
+        cancelBtn.setAttribute('data-confirm-dismiss', '');
+        cancelBtn.textContent = cancelText;
+
+        const okBtn = document.createElement('button');
+        okBtn.type = 'button';
+        okBtn.className = `btn btn--small ${danger ? 'btn--danger' : 'btn--primary'}`;
+        okBtn.setAttribute('data-confirm-ok', '');
+        okBtn.textContent = confirmText;
+
+        actions.append(cancelBtn, okBtn);
+        panel.append(h2, p, actions);
+        overlay.append(backdrop, panel);
+
+        const done = (value) => {
+            document.removeEventListener('keydown', onKey);
+            overlay.remove();
+            resolve(value);
+        };
+
+        const onKey = (e) => {
+            if (e.key === 'Escape') {
+                e.preventDefault();
+                done(false);
+            }
+        };
+
+        overlay.addEventListener('click', (e) => {
+            if (e.target.closest('[data-confirm-dismiss]')) done(false);
+            if (e.target.closest('[data-confirm-ok]')) done(true);
+        });
+
+        document.addEventListener('keydown', onKey);
+        document.body.appendChild(overlay);
+        requestAnimationFrame(() => okBtn.focus());
+    });
+}
+
 function navPathKey(pathname) {
     if (!pathname) return '/';
     let p = pathname.replace(/\/index\.html$/i, '');

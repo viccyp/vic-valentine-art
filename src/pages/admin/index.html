@@ -53,7 +53,7 @@
                         <td style="color:var(--color-text-muted);font-size:0.85rem;">${(p.created_at || '').slice(0, 10)}</td>
                         <td>
                             <a href="/admin/edit/?id=${p.id}" style="margin-right:1rem;font-size:0.85rem;">Edit</a>
-                            <button onclick="deletePost(${p.id})" style="background:none;border:none;color:var(--color-error);font-size:0.85rem;cursor:pointer;">Delete</button>
+                            <button type="button" class="admin-delete-post" data-post-id="${p.id}" data-post-title="${escHtml(p.title || '')}" style="background:none;border:none;color:var(--color-error);font-size:0.85rem;cursor:pointer;">Delete</button>
                         </td>
                     </tr>`).join('')}
                 </tbody>
@@ -65,9 +65,25 @@
         location.href = '/';
     });
 
-    async function deletePost(id) {
+    document.getElementById('posts-list').addEventListener('click', (e) => {
+        const btn = e.target.closest('.admin-delete-post');
+        if (!btn) return;
+        e.preventDefault();
+        deletePost(Number(btn.dataset.postId), btn.dataset.postTitle || '');
+    });
+
+    async function deletePost(id, title) {
         if (!db) return;
-        if (!confirm('Delete this article?')) return;
+        const ok = await confirmDialog({
+            title: 'Delete this article?',
+            message: title
+                ? `${title} will be removed from the site. This can’t be undone.`
+                : 'This article will be removed from the site. This can’t be undone.',
+            confirmText: 'Delete',
+            cancelText: 'Cancel',
+            danger: true,
+        });
+        if (!ok) return;
         const { error } = await db.from('posts').delete().eq('id', id);
         if (error) { showFlash('Delete failed: ' + error.message, 'error'); return; }
         showFlash('Article deleted.', 'success');

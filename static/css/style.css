@@ -2477,6 +2477,63 @@ main {
     to { opacity: 1; transform: translateX(0); }
 }
 
+/* ── Confirm dialog (replaces native confirm) ─────────────────── */
+
+.confirm-dialog {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+    animation: confirmDialogIn 0.2s ease;
+}
+
+.confirm-dialog__backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    cursor: pointer;
+}
+
+.confirm-dialog__panel {
+    position: relative;
+    max-width: 26rem;
+    width: 100%;
+    padding: 1.5rem 1.5rem 1.25rem;
+    background: var(--color-bg, #0a0a0a);
+    border: 1px solid var(--color-border);
+    box-shadow: 0 1rem 2.5rem rgba(0, 0, 0, 0.45);
+}
+
+.confirm-dialog__title {
+    margin: 0 0 0.75rem;
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    color: var(--color-text);
+}
+
+.confirm-dialog__message {
+    margin: 0 0 1.25rem;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--color-text-muted);
+}
+
+.confirm-dialog__actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 0.5rem;
+}
+
+@keyframes confirmDialogIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
 /* ── Admin ────────────────────────────────────────────────────── */
 
 .admin-layout {
