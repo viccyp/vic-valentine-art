@@ -80,18 +80,25 @@
     <script src="/static/js/music-spotify-player.js"></script>
     <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
     <script>
+    let __vvPostLoadGen = 0;
+
     async function loadPostPage() {
+        const gen = ++__vvPostLoadGen;
         const slug = new URLSearchParams(location.search).get('slug');
         if (!slug) { window.location.href = '/blog/'; return; }
 
         const el = document.getElementById('post-container');
         if (!el) return;
-        if (!db) {
-            el.innerHTML = '<p style="text-align:center; padding: calc(var(--nav-height) + 4rem) 2rem 4rem; color: var(--color-text-muted);">Post unavailable — run <code>npm run config</code> after adding a <code>.env</code> file.</p>';
+        el.innerHTML = '<p style="text-align:center; padding: calc(var(--nav-height) + 4rem) 2rem 4rem; color: var(--color-text-muted);">Loading&hellip;</p>';
+        const client = await waitForSupabaseClient();
+        if (gen !== __vvPostLoadGen) return;
+        if (!client) {
+            el.innerHTML = '<p style="text-align:center; padding: calc(var(--nav-height) + 4rem) 2rem 4rem; color: var(--color-text-muted);max-width:40em;margin-inline:auto;">Post unavailable — add <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> to <code>.env</code>, run <code>npm run build</code>, or set those env vars on your host so <code>supabase-runtime.js</code> is generated on deploy.</p>';
             return;
         }
 
-        const { data: post, error } = await db.from('posts').select('*').eq('slug', slug).eq('published', 1).single();
+        const { data: post, error } = await client.from('posts').select('*').eq('slug', slug).eq('published', 1).single();
+        if (gen !== __vvPostLoadGen) return;
 
         if (error || !post) {
             el.innerHTML = '<p style="text-align:center; padding: calc(var(--nav-height) + 4rem) 2rem 4rem; color: var(--color-text-muted);">Post not found.</p>';
@@ -129,6 +136,14 @@
     }
     document.addEventListener('DOMContentLoaded', loadPostPage);
     document.addEventListener('turbo:load', loadPostPage);
+    window.addEventListener('load', function () {
+        const el = document.getElementById('post-container');
+        if (!el) return;
+        const t = el.textContent || '';
+        if (/Post unavailable|npm run config|supabase-runtime/i.test(t)) {
+            loadPostPage();
+        }
+    });
     </script>
 </body>
 </html>
