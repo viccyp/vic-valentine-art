@@ -265,6 +265,20 @@ main {
     object-fit: cover;
     object-position: center;
     background: #000;
+    /* No native play overlay on iOS / WebKit — background is decorative + programmatically played */
+    pointer-events: none;
+}
+
+.page-bg-video__media::-webkit-media-controls {
+    display: none !important;
+}
+
+.page-bg-video__media::-webkit-media-controls-enclosure {
+    display: none !important;
+}
+
+.page-bg-video__media::-webkit-media-controls-start-playback-button {
+    display: none !important;
 }
 
 .page-bg-video__veil {

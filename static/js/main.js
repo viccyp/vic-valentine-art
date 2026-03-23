@@ -195,19 +195,27 @@ function initMobileFriendlyAutoplayVideos() {
             v.pause();
             return;
         }
+        v.controls = false;
+        v.removeAttribute('controls');
         v.muted = true;
         v.defaultMuted = true;
         v.setAttribute('muted', '');
         v.setAttribute('playsinline', '');
         v.setAttribute('webkit-playsinline', '');
         if ('playsInline' in v) v.playsInline = true;
-        if (!v.preload || v.preload === 'auto') v.preload = 'metadata';
+        const isBg = v.classList.contains('page-bg-video__media');
+        if (isBg) {
+            v.preload = 'auto';
+        } else if (!v.preload || v.preload === 'auto') {
+            v.preload = 'metadata';
+        }
 
         const nudge = () => {
             const p = v.play();
             if (p !== undefined && typeof p.catch === 'function') p.catch(() => {});
         };
         nudge();
+        v.addEventListener('loadedmetadata', nudge, { once: true });
         v.addEventListener('canplay', nudge, { once: true });
         v.addEventListener('loadeddata', nudge, { once: true });
     });
