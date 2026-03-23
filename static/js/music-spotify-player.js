@@ -2,19 +2,20 @@
  * Credits playlist + hidden Spotify embed via iFrame API.
  * https://developer.spotify.com/documentation/embeds/references/iframe-api
  *
- * Tracks are read from #credits-playlist when that block exists; otherwise the
- * last parsed list (or DEFAULT_TRACKS on first paint) keeps the embed usable site-wide.
+ * Tracks are read from #credits-playlist when that block exists (sorted by
+ * data-released, newest first); otherwise DEFAULT_TRACKS keeps the embed usable site-wide.
  */
 if (typeof window !== 'undefined' && !window.__vvMusicSpotifyBundleLoaded) {
     window.__vvMusicSpotifyBundleLoaded = true;
     (function () {
+        /** Newest first (Spotify album release date); matches #credits-playlist data-released. */
         var DEFAULT_TRACKS = [
-            { id: '1qho1ycAdjJQVQZ7SdyTeI', title: 'Lisbon', artist: 'Marianne Collective' },
-            { id: '2NHENv26qc6uGFafOxLMOm', title: 'Hypnotic', artist: 'Marianne Collective' },
+            { id: '1TwzcE1N7VFkAlsSg3ay2P', title: 'Keep Me in the Garden', artist: 'Rory Dinwoodie' },
+            { id: '2uI1liemd45f1vSnYabhNF', title: 'Green Mountain State', artist: 'Rory Dinwoodie' },
             { id: '07TXXN0JHsLFR6oSFEITPq', title: 'Just Like You', artist: 'Searching For Sergio' },
             { id: '3guORTZpFBeAoy963TadRL', title: 'Parce que', artist: 'Harpie, Hendy, Tessera, Vic Valentine' },
-            { id: '2uI1liemd45f1vSnYabhNF', title: 'Green Mountain State', artist: 'Rory Dinwoodie' },
-            { id: '1TwzcE1N7VFkAlsSg3ay2P', title: 'Keep Me in the Garden', artist: 'Rory Dinwoodie' },
+            { id: '1qho1ycAdjJQVQZ7SdyTeI', title: 'Lisbon', artist: 'Marianne Collective' },
+            { id: '2NHENv26qc6uGFafOxLMOm', title: 'Hypnotic', artist: 'Marianne Collective' },
         ];
 
         var tracks = DEFAULT_TRACKS.slice();
@@ -38,16 +39,19 @@ if (typeof window !== 'undefined' && !window.__vvMusicSpotifyBundleLoaded) {
             return 'spotify:track:' + id;
         }
 
-        /** When #credits-playlist is in the document, replace `tracks` from markup. */
+        /** When #credits-playlist is in the document, replace `tracks` from markup (newest data-released first). */
         function syncTracksFromDom() {
             var root = document.getElementById('credits-playlist');
             if (!root) return;
-            var items = Array.from(root.querySelectorAll('li[data-track-index]'));
+            var items = Array.from(root.querySelectorAll(':scope > li'));
             items.sort(function (a, b) {
-                return (
-                    parseInt(a.getAttribute('data-track-index'), 10) -
-                    parseInt(b.getAttribute('data-track-index'), 10)
-                );
+                var da = a.getAttribute('data-released') || '0000-01-01';
+                var db = b.getAttribute('data-released') || '0000-01-01';
+                return db.localeCompare(da);
+            });
+            items.forEach(function (li, i) {
+                li.setAttribute('data-track-index', String(i));
+                root.appendChild(li);
             });
             var next = [];
             items.forEach(function (li) {
