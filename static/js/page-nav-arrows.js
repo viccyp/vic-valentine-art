@@ -30,20 +30,20 @@
         const root = document.getElementById('page-nav-arrows');
         if (!root) return;
         const slot = pageNavSlot(window.location.pathname);
-        if (slot < 0) {
+        if (slot < 0 || slot === 0) {
             root.setAttribute('hidden', '');
             return;
         }
         const n = ORDER.length;
         const prevIdx = (slot - 1 + n) % n;
         const nextIdx = (slot + 1) % n;
-        const prevA = root.querySelector('.page-nav-arrows__btn--prev');
-        const nextA = root.querySelector('.page-nav-arrows__btn--next');
+        const prevA = root.querySelector('.page-nav-arrows__link--prev');
+        const nextA = root.querySelector('.page-nav-arrows__link--next');
         if (!prevA || !nextA) return;
         prevA.href = ORDER[prevIdx];
         nextA.href = ORDER[nextIdx];
-        prevA.setAttribute('aria-label', `Previous: ${LABELS[prevIdx]}`);
-        nextA.setAttribute('aria-label', `Next: ${LABELS[nextIdx]}`);
+        prevA.setAttribute('aria-label', `Back — ${LABELS[prevIdx]}`);
+        nextA.setAttribute('aria-label', `Forward — ${LABELS[nextIdx]}`);
         root.removeAttribute('hidden');
     }
 

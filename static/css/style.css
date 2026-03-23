@@ -2859,7 +2859,9 @@ body.home .home-enter-bar__inner {
     justify-content: center;
 }
 
-body.home .home-enter {
+/* Home CTA + footer section nav — same glass outline treatment */
+body.home .home-enter,
+.section-nav-btn {
     background: rgba(12, 12, 12, 0.5);
     backdrop-filter: blur(12px);
     -webkit-backdrop-filter: blur(12px);
@@ -2868,27 +2870,25 @@ body.home .home-enter {
     text-decoration: none;
 }
 
-body.home .home-enter:hover {
+body.home .home-enter:hover,
+.section-nav-btn:hover {
     border-color: rgba(255, 255, 255, 0.45);
     color: #fff;
     background: rgba(22, 22, 22, 0.65);
 }
 
+body:not(.home) .section-nav-btn {
+    border-color: rgba(255, 255, 255, 0.18);
+}
+
+body:not(.home) .section-nav-btn:hover {
+    border-color: rgba(255, 255, 255, 0.38);
+    background: rgba(22, 22, 22, 0.55);
+}
+
 body.home .footer {
     background: transparent;
     border-top-color: rgba(255, 255, 255, 0.08);
-}
-
-body.home .page-nav-arrows {
-    border-bottom-color: rgba(255, 255, 255, 0.08);
-}
-
-body.home .page-nav-arrows__btn {
-    color: rgba(255, 255, 255, 0.5);
-}
-
-body.home .page-nav-arrows__btn:hover {
-    color: #fff;
 }
 
 /* ── Footer ───────────────────────────────────────────────────── */
@@ -2912,28 +2912,9 @@ body.home .page-nav-arrows__btn:hover {
     width: 100%;
 }
 
-.page-nav-arrows__btn {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0.35rem 0.5rem;
-    color: var(--color-text-muted);
-    text-decoration: none;
-    transition: color 0.2s ease, transform 0.2s ease;
-}
-
-.page-nav-arrows__btn:hover {
-    color: var(--color-text);
-}
-
-.page-nav-arrows__btn:focus-visible {
+.page-nav-arrows__link:focus-visible {
     outline: 2px solid var(--color-text);
     outline-offset: 3px;
-}
-
-.page-nav-arrows__icon {
-    display: block;
-    fill: currentColor;
 }
 
 .footer {
