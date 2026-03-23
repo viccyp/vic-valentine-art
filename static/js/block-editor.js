@@ -142,8 +142,19 @@ class BlockEditor {
         const btns = header.querySelectorAll("button");
         btns[0].addEventListener("click", () => this.moveBlock(index, -1));
         btns[1].addEventListener("click", () => this.moveBlock(index, 1));
-        btns[2].addEventListener("click", () => {
-            if (confirm("Remove this block?")) this.removeBlock(index);
+        btns[2].addEventListener("click", async () => {
+            const ok =
+                typeof confirmDialog === "function"
+                    ? await confirmDialog({
+                          title: "Remove this block?",
+                          message:
+                              "This content block will be removed from the article. This only applies after you save.",
+                          confirmText: "Remove",
+                          cancelText: "Cancel",
+                          danger: true,
+                      })
+                    : confirm("Remove this block?");
+            if (ok) this.removeBlock(index);
         });
         card.appendChild(header);
 

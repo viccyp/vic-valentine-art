@@ -8,6 +8,7 @@
     <meta name="author" content="Vic Valentine">
     <script src="https://cdn.jsdelivr.net/npm/@hotwired/turbo@8.0.12/dist/turbo.es2017-umd.js"></script>
     <script src="/static/js/turbo-persist-music-dock.js"></script>
+    <script src="/static/js/turbo-scroll-top.js"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Datatype:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
@@ -119,6 +120,8 @@
                 const t = Math.min(1, y / maxVeilScroll);
                 bg.style.setProperty('--home-veil-blur', (t * 12).toFixed(2) + 'px');
                 bg.style.setProperty('--home-veil-alpha', (t * 0.38).toFixed(4));
+                const videoBlurPx = reduceMotion ? 0 : t * 2.25;
+                bg.style.setProperty('--home-video-blur', videoBlurPx.toFixed(2) + 'px');
             }
             if (!heroSplit || !heroReveals.length) return;
             if (reduceMotion) {

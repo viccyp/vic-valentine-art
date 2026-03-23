@@ -51,6 +51,8 @@
                 const t = Math.min(1, y / maxVeilScroll);
                 bg.style.setProperty('--home-veil-blur', (t * 12).toFixed(2) + 'px');
                 bg.style.setProperty('--home-veil-alpha', (t * 0.38).toFixed(4));
+                const videoBlurPx = reduceMotion ? 0 : t * 2.25;
+                bg.style.setProperty('--home-video-blur', videoBlurPx.toFixed(2) + 'px');
             }
             if (!heroSplit || !heroReveals.length) return;
             if (reduceMotion) {
