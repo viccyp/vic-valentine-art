@@ -21,9 +21,8 @@
                     <a href="/">Home</a>
                     <a href="/visual/">Visual</a>
                     <a href="/audio/">Audio</a>
-                    <a href="/velo/">Velo</a>
                     <a href="/code/">Code</a>
-                    <a href="/blog/">Blog</a>
+                    <a href="/mag/">Mag</a>
                 </div>
             </div>
             <div class="nav__trailing">
@@ -164,25 +163,7 @@
                 <article class="music-block music-block--gallery" id="audio-gallery">
                     <h3 class="music-block__title">Audio clips</h3>
                     <p class="music-block__lead">Demos, field recordings, and one-offs—hosted on the site.</p>
-                    <div class="music-audio-gallery">
-                        <article class="music-audio-card">
-                            <div class="music-audio-card__player-wrap"></div>
-                            <p class="music-audio-card__title">Recording title</p>
-                        </article>
-                        <article class="music-audio-card">
-                            <div class="music-audio-card__player-wrap"></div>
-                            <p class="music-audio-card__title">Recording title</p>
-                        </article>
-                        <article class="music-audio-card">
-                            <div class="music-audio-card__player-wrap"></div>
-                            <p class="music-audio-card__title">Recording title</p>
-                        </article>
-                        <article class="music-audio-card">
-                            <div class="music-audio-card__player-wrap"></div>
-                            <p class="music-audio-card__title">Recording title</p>
-                        </article>
-                    </div>
-                    <!-- <p class="music-file-hint">Add files under <code>/public/audio/</code>, then put <code>&lt;audio class="music-audio-card__player" controls preload="metadata" src="/public/audio/yourfile.mp3"&gt;&lt;/audio&gt;</code> inside each <code>.music-audio-card__player-wrap</code>.</p> -->
+                    <p class="music-audio-coming-soon" role="status">Coming soon</p>
                 </article>
             </div>
         </section>
@@ -191,8 +172,16 @@
         <div class="container">
             <nav class="page-nav-arrows" id="page-nav-arrows" aria-label="Site sections" hidden>
                 <div class="page-nav-arrows__inner">
-                    <a class="page-nav-arrows__link btn btn--outline section-nav-btn page-nav-arrows__link--prev" href="/blog/">back</a>
-                    <a class="page-nav-arrows__link btn btn--outline section-nav-btn page-nav-arrows__link--next" href="/visual/">forward</a>
+                    <a class="page-nav-arrows__link page-nav-arrows__link--prev" href="/mag/" aria-label="Back">
+                        <svg class="page-nav-arrows__tri" width="14" height="14" viewBox="0 0 10 10" aria-hidden="true" focusable="false">
+                            <polygon points="7,1 2,5 7,9" fill="currentColor"/>
+                        </svg>
+                    </a>
+                    <a class="page-nav-arrows__link page-nav-arrows__link--next" href="/visual/" aria-label="Forward">
+                        <svg class="page-nav-arrows__tri" width="14" height="14" viewBox="0 0 10 10" aria-hidden="true" focusable="false">
+                            <polygon points="3,1 8,5 3,9" fill="currentColor"/>
+                        </svg>
+                    </a>
                 </div>
             </nav>
             <p>&copy; 2026 Vic Valentine. All rights reserved.</p>
@@ -268,9 +257,73 @@
             return new Date(b.event_date) - new Date(a.event_date);
         });
 
+        function extractCityFromLocation(location) {
+            if (!location || typeof location !== 'string') return '';
+            const parts = location
+                .split(',')
+                .map(p => p.trim())
+                .filter(Boolean);
+            if (!parts.length) return '';
+
+            // Many rows store "venue + address + city" in `location`.
+            // We approximate "city" by dropping trailing country tokens (e.g. UK, France).
+            const countryHints = new Set([
+                'uk',
+                'us',
+                'usa',
+                'france',
+                'germany',
+                'spain',
+                'italy',
+                'ireland',
+                'canada',
+                'australia',
+                'new zealand',
+                'netherlands',
+                'sweden',
+                'norway',
+                'denmark',
+                'finland',
+                'belgium',
+                'switzerland',
+                'austria',
+                'portugal',
+                'greece',
+                'poland',
+                'japan',
+                'china',
+                'korea',
+                'singapore',
+                'hong kong',
+                'south africa',
+                'india',
+                'russia'
+            ]);
+
+            while (parts.length) {
+                const last = parts[parts.length - 1];
+                const lower = last.toLowerCase();
+                const looksLikeCountryAbbr = /^[A-Z]{2,4}$/.test(last);
+                if (looksLikeCountryAbbr || countryHints.has(lower)) {
+                    parts.pop();
+                    continue;
+                }
+                break;
+            }
+
+            const rawCity = parts[parts.length - 1] || '';
+            // Strip UK-style postcodes from the end of the city (e.g. "SE1 3QJ", "NW5 3HS", "E8 3AS").
+            const postcodeRegex = /\b[A-Z]{1,2}\d{1,2}[A-Z]?\s?\d[A-Z]{2}\b/i;
+            const cleaned = rawCity
+                .replace(postcodeRegex, '')
+                .replace(/\s{2,}/g, ' ')
+                .trim();
+            return cleaned || rawCity.trim();
+        }
+
         function gigRowHtml(s, isPastRow) {
             const when = formatDate(s.event_date);
-            const venue = escHtml(s.location || '');
+            const city = escHtml(extractCityFromLocation(s.location || ''));
             const headline = escHtml(s.name || 'Event');
             const dt = escHtml((s.event_date || '').slice(0, 16));
             const side = isPastRow
@@ -281,7 +334,7 @@
                 <div class="music-gig-row__text">
                     <time class="music-gig-row__date" datetime="${dt}">${escHtml(when)}</time>
                     <h4 class="music-gig-row__title">${headline}</h4>
-                    <p class="music-gig-row__meta">${venue || '\u00a0'}</p>
+                    <p class="music-gig-row__meta">${city || '\u00a0'}</p>
                 </div>
                 ${side}
             </article>`;

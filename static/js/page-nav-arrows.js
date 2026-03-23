@@ -1,6 +1,6 @@
 (function () {
-    const ORDER = ['/', '/visual/', '/audio/', '/velo/', '/code/', '/blog/'];
-    const LABELS = ['Home', 'Visual', 'Audio', 'Velo', 'Code', 'Blog'];
+    const ORDER = ['/', '/visual/', '/audio/', '/code/', '/mag/'];
+    const LABELS = ['Home', 'Visual', 'Audio', 'Code', 'Mag'];
 
     function normPath(pathname) {
         let p = pathname || '/';
@@ -16,13 +16,12 @@
         if (/^\/admin(\/|$)/i.test(p)) return -1;
         const exact = ORDER.indexOf(p);
         if (exact >= 0) return exact;
-        if (p.startsWith('/post/')) return 5;
+        if (p.startsWith('/post/')) return 4;
         if (p.startsWith('/audio/event/')) return 2;
         if (p.startsWith('/audio/')) return 2;
         if (p.startsWith('/visual/')) return 1;
-        if (p.startsWith('/velo/')) return 3;
-        if (p.startsWith('/code/')) return 4;
-        if (p.startsWith('/blog/')) return 5;
+        if (p.startsWith('/code/')) return 3;
+        if (p.startsWith('/mag/')) return 4;
         return -1;
     }
 

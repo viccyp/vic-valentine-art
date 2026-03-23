@@ -19,9 +19,8 @@
                     <a href="/">Home</a>
                     <a href="/visual/">Visual</a>
                     <a href="/audio/">Audio</a>
-                    <a href="/velo/">Velo</a>
                     <a href="/code/">Code</a>
-                    <a href="/blog/">Blog</a>
+                    <a href="/mag/">Mag</a>
                 </div>
             </div>
             <div class="nav__trailing">
@@ -43,9 +42,9 @@
         <div class="admin-layout">
             <div class="container">
                 <div class="admin-header">
-                    <h2>Blog Posts</h2>
+                    <h2>Mag Articles</h2>
                     <div>
-                        <a href="/admin/edit/" class="btn btn--primary btn--small">New Post</a>
+                        <a href="/admin/edit/" class="btn btn--primary btn--small">New Article</a>
                         <button id="logout-btn" class="btn btn--outline btn--small" style="margin-left: 0.5rem;">Log Out</button>
                     </div>
                 </div>
@@ -59,8 +58,16 @@
         <div class="container">
             <nav class="page-nav-arrows" id="page-nav-arrows" aria-label="Site sections" hidden>
                 <div class="page-nav-arrows__inner">
-                    <a class="page-nav-arrows__link btn btn--outline section-nav-btn page-nav-arrows__link--prev" href="/blog/">back</a>
-                    <a class="page-nav-arrows__link btn btn--outline section-nav-btn page-nav-arrows__link--next" href="/visual/">forward</a>
+                    <a class="page-nav-arrows__link page-nav-arrows__link--prev" href="/mag/" aria-label="Back">
+                        <svg class="page-nav-arrows__tri" width="14" height="14" viewBox="0 0 10 10" aria-hidden="true" focusable="false">
+                            <polygon points="7,1 2,5 7,9" fill="currentColor"/>
+                        </svg>
+                    </a>
+                    <a class="page-nav-arrows__link page-nav-arrows__link--next" href="/visual/" aria-label="Forward">
+                        <svg class="page-nav-arrows__tri" width="14" height="14" viewBox="0 0 10 10" aria-hidden="true" focusable="false">
+                            <polygon points="3,1 8,5 3,9" fill="currentColor"/>
+                        </svg>
+                    </a>
                 </div>
             </nav>
             <p>&copy; 2026 Vic Valentine. All rights reserved.</p>
@@ -83,7 +90,7 @@
         const { data: posts } = await db.from('posts').select('*').order('created_at', { ascending: false });
 
         if (!posts || !posts.length) {
-            container.innerHTML = '<p style="color: var(--color-text-muted);">No posts yet. Create your first one.</p>';
+            container.innerHTML = '<p style="color: var(--color-text-muted);">No articles yet. Create your first one.</p>';
             return;
         }
 
@@ -111,10 +118,10 @@
 
     async function deletePost(id) {
         if (!db) return;
-        if (!confirm('Delete this post?')) return;
+        if (!confirm('Delete this article?')) return;
         const { error } = await db.from('posts').delete().eq('id', id);
         if (error) { showFlash('Delete failed: ' + error.message, 'error'); return; }
-        showFlash('Post deleted.', 'success');
+        showFlash('Article deleted.', 'success');
         location.reload();
     }
     </script>

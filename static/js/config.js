@@ -196,7 +196,11 @@ function initActiveNav() {
         const href = a.getAttribute('href');
         if (!href || href.startsWith('http') || href.startsWith('mailto:')) return;
         const hrefKey = navPathKey(href);
-        if (hrefKey === pathKey || (hrefKey === '/audio' && pathKey.startsWith('/audio'))) {
+        if (
+            hrefKey === pathKey ||
+            (hrefKey === '/audio' && pathKey.startsWith('/audio')) ||
+            (hrefKey === '/mag' && pathKey.startsWith('/post'))
+        ) {
             a.classList.add('active');
         }
     });

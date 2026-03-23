@@ -10,7 +10,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Datatype:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
-    <title>Blog — Vic Valentine</title>
+    <title>Mag — Vic Valentine</title>
 </head>
 <body>
     <nav class="nav">
@@ -21,9 +21,8 @@
                     <a href="/">Home</a>
                     <a href="/visual/">Visual</a>
                     <a href="/audio/">Audio</a>
-                    <a href="/velo/">Velo</a>
                     <a href="/code/">Code</a>
-                    <a href="/blog/">Blog</a>
+                    <a href="/mag/">Mag</a>
                 </div>
             </div>
             <div class="nav__trailing">
@@ -45,7 +44,7 @@
         <section class="section" style="padding-top: calc(var(--nav-height) + 4rem);">
             <div class="container">
                 <div class="section__header">
-                    <h2>Blog</h2>
+                    <h2>Mag</h2>
                 </div>
                 <div class="blog-list" id="blog-list">
                     <p style="text-align: center; color: var(--color-text-muted);">Loading&hellip;</p>
@@ -57,8 +56,16 @@
         <div class="container">
             <nav class="page-nav-arrows" id="page-nav-arrows" aria-label="Site sections" hidden>
                 <div class="page-nav-arrows__inner">
-                    <a class="page-nav-arrows__link btn btn--outline section-nav-btn page-nav-arrows__link--prev" href="/blog/">back</a>
-                    <a class="page-nav-arrows__link btn btn--outline section-nav-btn page-nav-arrows__link--next" href="/visual/">forward</a>
+                    <a class="page-nav-arrows__link page-nav-arrows__link--prev" href="/mag/" aria-label="Back">
+                        <svg class="page-nav-arrows__tri" width="14" height="14" viewBox="0 0 10 10" aria-hidden="true" focusable="false">
+                            <polygon points="7,1 2,5 7,9" fill="currentColor"/>
+                        </svg>
+                    </a>
+                    <a class="page-nav-arrows__link page-nav-arrows__link--next" href="/visual/" aria-label="Forward">
+                        <svg class="page-nav-arrows__tri" width="14" height="14" viewBox="0 0 10 10" aria-hidden="true" focusable="false">
+                            <polygon points="3,1 8,5 3,9" fill="currentColor"/>
+                        </svg>
+                    </a>
                 </div>
             </nav>
             <p>&copy; 2026 Vic Valentine. All rights reserved.</p>
@@ -83,6 +90,10 @@
     <script src="/static/js/music-spotify-player.js"></script>
     <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
     <script>
+    // Back-compat: the public section is now `/mag/` (articles).
+    if (typeof window !== 'undefined' && window.location.pathname.startsWith('/blog')) {
+        window.location.replace('/mag/');
+    }
     let __vvBlogLoadGen = 0;
 
     async function loadBlogList() {
@@ -99,11 +110,11 @@
         const { data: posts, error } = await client.from('posts').select('*').eq('published', 1).order('created_at', { ascending: false });
         if (gen !== __vvBlogLoadGen) return;
         if (error) {
-            list.innerHTML = `<p style="text-align:center;color:var(--color-text-muted);max-width:36em;margin-inline:auto;">Could not load posts (${escHtml(error.message)}). Check the browser Network tab for <code>rest/v1/posts</code>, confirm <code>npm run build</code> on deploy creates <code>supabase-runtime.js</code>, and run <code>scripts/posts-blog-schema.sql</code> in Supabase (RLS + <code>posts</code> table).</p>`;
+            list.innerHTML = `<p style="text-align:center;color:var(--color-text-muted);max-width:36em;margin-inline:auto;">Could not load articles (${escHtml(error.message)}). Check the browser Network tab for <code>rest/v1/posts</code>, confirm <code>npm run build</code> on deploy creates <code>supabase-runtime.js</code>, and run <code>scripts/posts-blog-schema.sql</code> in Supabase (RLS + <code>posts</code> table).</p>`;
             return;
         }
         if (!posts || !posts.length) {
-            list.innerHTML = '<p style="text-align:center;color:var(--color-text-muted);">No blog posts yet. Publish a post in Admin or set <code>published = 1</code> on rows in the <code>posts</code> table.</p>';
+            list.innerHTML = '<p style="text-align:center;color:var(--color-text-muted);">No articles yet. Publish an article in Admin or set <code>published = 1</code> on rows in the <code>posts</code> table.</p>';
             return;
         }
         list.innerHTML = posts.map(p => `
@@ -124,7 +135,7 @@
         const list = document.getElementById('blog-list');
         if (!list) return;
         const t = list.textContent || '';
-        if (/If the content does not appear|Could not load posts/i.test(t)) {
+        if (/If the content does not appear|Could not load articles/i.test(t)) {
             loadBlogList();
         }
     });

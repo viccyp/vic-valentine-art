@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Datatype:wght@400;500;600;700&amp;display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
-    <title>Edit Post — Vic Valentine</title>
+    <title>Edit Article — Vic Valentine</title>
     <script src="/static/js/block-editor.js"></script>
 </head>
 <body>
@@ -20,9 +20,8 @@
                     <a href="/">Home</a>
                     <a href="/visual/">Visual</a>
                     <a href="/audio/">Audio</a>
-                    <a href="/velo/">Velo</a>
                     <a href="/code/">Code</a>
-                    <a href="/blog/">Blog</a>
+                    <a href="/mag/">Mag</a>
                 </div>
             </div>
             <div class="nav__trailing">
@@ -44,7 +43,7 @@
         <div class="admin-layout">
             <div class="container" style="max-width: 960px;">
                 <div class="admin-header">
-                    <h2 id="page-title">New Post</h2>
+                    <h2 id="page-title">New Article</h2>
                     <a href="/admin/" class="btn btn--outline btn--small">Back</a>
                 </div>
 
@@ -53,6 +52,10 @@
                         <label for="title">Title</label>
                         <input type="text" id="title" required>
                     </div>
+                    <div class="form-group">
+                        <label for="subheading">Subheading</label>
+                        <input type="text" id="subheading" placeholder="Shown on Mag card hover">
+                    </div>
 
                     <div class="form-group">
                         <div class="block-card block-card--cover">
@@ -60,7 +63,7 @@
                                 <span class="block-card__type">Cover image</span>
                             </div>
                             <div class="block-card__body">
-                                <p class="form-hint">Shown on the blog listing. If you skip this, the first image in the post is used.</p>
+                                <p class="form-hint">Shown on the Mag listing. If you skip this, the first image in the article is used.</p>
                                 <input type="hidden" id="cover_image_path" value="">
                                 <div id="cover_image_slot" class="block-image-slot"></div>
                             </div>
@@ -69,7 +72,7 @@
 
                     <div class="form-group">
                         <label for="cover_alt">Cover Image Alt Text</label>
-                        <input type="text" id="cover_alt" placeholder="Describes the cover image used on the blog listing">
+                        <input type="text" id="cover_alt" placeholder="Describes the cover image used on the Mag listing">
                     </div>
 
                     <div class="form-group">
@@ -95,7 +98,7 @@
                         </label>
                     </div>
 
-                    <button type="submit" class="btn btn--primary" id="submit-btn">Create Post</button>
+                    <button type="submit" class="btn btn--primary" id="submit-btn">Create Article</button>
                 </form>
             </div>
         </div>
@@ -104,8 +107,16 @@
         <div class="container">
             <nav class="page-nav-arrows" id="page-nav-arrows" aria-label="Site sections" hidden>
                 <div class="page-nav-arrows__inner">
-                    <a class="page-nav-arrows__link btn btn--outline section-nav-btn page-nav-arrows__link--prev" href="/blog/">back</a>
-                    <a class="page-nav-arrows__link btn btn--outline section-nav-btn page-nav-arrows__link--next" href="/visual/">forward</a>
+                    <a class="page-nav-arrows__link page-nav-arrows__link--prev" href="/mag/" aria-label="Back">
+                        <svg class="page-nav-arrows__tri" width="14" height="14" viewBox="0 0 10 10" aria-hidden="true" focusable="false">
+                            <polygon points="7,1 2,5 7,9" fill="currentColor"/>
+                        </svg>
+                    </a>
+                    <a class="page-nav-arrows__link page-nav-arrows__link--next" href="/visual/" aria-label="Forward">
+                        <svg class="page-nav-arrows__tri" width="14" height="14" viewBox="0 0 10 10" aria-hidden="true" focusable="false">
+                            <polygon points="3,1 8,5 3,9" fill="currentColor"/>
+                        </svg>
+                    </a>
                 </div>
             </nav>
             <p>&copy; 2026 Vic Valentine. All rights reserved.</p>
@@ -213,12 +224,13 @@
             const { data: post } = await db.from('posts').select('*').eq('id', postId).single();
             if (post) {
                 document.getElementById('title').value = post.title || '';
+                document.getElementById('subheading').value = post.subheading || '';
                 document.getElementById('cover_alt').value = post.cover_alt || '';
                 if (post.cover_image) coverPathInput.value = post.cover_image;
                 document.getElementById('published').checked = !!post.published;
-                document.getElementById('page-title').textContent = 'Edit Post';
-                document.getElementById('submit-btn').textContent = 'Update Post';
-                document.title = 'Edit Post — Vic Valentine';
+                    document.getElementById('page-title').textContent = 'Edit Article';
+                    document.getElementById('submit-btn').textContent = 'Update Article';
+                    document.title = 'Edit Article — Vic Valentine';
                 try { initial = JSON.parse(post.body); } catch {}
                 if (!Array.isArray(initial)) initial = [];
             }
@@ -237,6 +249,7 @@
         e.preventDefault();
         const title = document.getElementById('title').value.trim();
         if (!title) { showFlash('Title is required.', 'error'); return; }
+        const subheading = document.getElementById('subheading').value.trim();
 
         const blocks = editor.blocks.map(b => { const { key, ...rest } = b; return rest; });
         const body = JSON.stringify(blocks);
@@ -248,7 +261,17 @@
         const published = document.getElementById('published').checked ? 1 : 0;
         const now = new Date().toISOString();
 
-        const postData = { title, slug, body, body_html: bodyHtml, cover_image: coverImage, cover_alt: coverAlt, published, updated_at: now };
+        const postData = {
+            title,
+            subheading,
+            slug,
+            body,
+            body_html: bodyHtml,
+            cover_image: coverImage,
+            cover_alt: coverAlt,
+            published,
+            updated_at: now
+        };
         let error;
 
         if (postId) {
@@ -261,7 +284,7 @@
         if (error) {
             showFlash('Save failed: ' + error.message, 'error');
         } else {
-            showFlash('Post saved!', 'success');
+            showFlash('Article saved!', 'success');
             setTimeout(() => { location.href = '/admin/'; }, 500);
         }
     });

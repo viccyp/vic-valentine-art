@@ -20,8 +20,12 @@
     --color-success: #3dd68c;
     --font-body: "Datatype", ui-monospace, "Cascadia Code", monospace;
     --font-heading: "Datatype", ui-monospace, "Cascadia Code", monospace;
+    /* Main content width; desktop uses full viewport (see media query) */
     --max-width: 1400px;
     --nav-height: 72px;
+    /* Navbar glass: lower = more see-through (tune 0.35–0.85) */
+    --nav-bg-alpha: 0.52;
+    --nav-backdrop-blur: 14px;
 }
 
 html {
@@ -94,6 +98,25 @@ h4 { font-size: 1rem; }
     max-width: 860px;
 }
 
+/* Wider layouts on viewports above the mobile nav breakpoint */
+@media (min-width: 769px) {
+    :root {
+        --max-width: none;
+    }
+
+    .container {
+        max-width: none;
+        width: 100%;
+        padding-left: clamp(1.5rem, 4vw, 3rem);
+        padding-right: clamp(1.5rem, 4vw, 3rem);
+    }
+
+    /* Keep reading width for articles / long prose */
+    .container.container--narrow {
+        max-width: 860px;
+    }
+}
+
 main {
     flex: 1;
 }
@@ -109,8 +132,10 @@ main {
     display: flex;
     align-items: center;
     z-index: 1000;
-    background: var(--color-bg);
-    border-bottom: 1px solid var(--color-border);
+    background: rgba(1, 1, 1, var(--nav-bg-alpha));
+    backdrop-filter: blur(var(--nav-backdrop-blur));
+    -webkit-backdrop-filter: blur(var(--nav-backdrop-blur));
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
     isolation: isolate;
 }
 
@@ -395,7 +420,8 @@ main {
 
 .music-split {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    /* Credits wider, monthly pick narrower */
+    grid-template-columns: minmax(0, 1.45fr) minmax(0, 0.55fr);
     gap: 0;
     align-items: start;
     margin-bottom: clamp(3.5rem, 8vw, 5rem);
@@ -835,6 +861,18 @@ main {
     text-transform: none;
     letter-spacing: 0.02em;
     font-weight: 400;
+}
+
+.music-audio-coming-soon {
+    margin: 0;
+    padding: clamp(1.5rem, 4vw, 2.25rem);
+    text-align: center;
+    font-size: 0.9rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    border: 1px dashed var(--color-border);
+    background: var(--color-surface);
 }
 
 .music-audio-gallery {
@@ -1452,6 +1490,80 @@ main {
     max-width: 42rem;
 }
 
+/* Mag index: two cards per row with hover subheading */
+.mag-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 2rem;
+}
+
+.mag-card {
+    display: block;
+    background: transparent;
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+    transition: border-color 0.25s;
+}
+
+.mag-card:hover {
+    border-color: var(--color-text-muted);
+}
+
+.mag-card__image {
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+}
+
+.mag-card__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.45s ease;
+}
+
+.mag-card:hover .mag-card__image img {
+    transform: scale(1.03);
+}
+
+.mag-card__body {
+    padding: 1.05rem 1.1rem 1.2rem;
+}
+
+.mag-card__title {
+    font-size: 1rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin: 0;
+    line-height: 1.3;
+}
+
+.mag-card__subheading {
+    margin: 0;
+    margin-top: 0;
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    color: var(--color-text-muted);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    text-transform: none;
+    letter-spacing: 0.01em;
+    transition: max-height 0.25s ease, opacity 0.2s ease, margin-top 0.25s ease;
+}
+
+.mag-card:hover .mag-card__subheading {
+    margin-top: 0.55rem;
+    max-height: 5.5rem;
+    opacity: 1;
+}
+
+@media (max-width: 900px) {
+    .mag-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+}
+
 @media (max-width: 640px) {
     .blog-list {
         gap: 2.5rem;
@@ -1659,8 +1771,10 @@ main {
     padding-top: calc(var(--nav-height) + 1.5rem);
 }
 
+/* No top padding: hero video fills viewport so fixed nav sits over the
+   video (glass/blur works). Padding here only showed body #010101 behind nav. */
 .section.section--art.section--art-flush {
-    padding-top: var(--nav-height);
+    padding-top: 0;
 }
 
 .art-hero {
@@ -1682,8 +1796,8 @@ main {
 }
 
 .section.section--art.section--art-flush .art-hero:first-of-type .art-hero__media {
-    height: calc(100vh - var(--nav-height));
-    height: calc(100dvh - var(--nav-height));
+    height: 100vh;
+    height: 100dvh;
     max-height: none;
 }
 
@@ -2823,10 +2937,15 @@ body.home .footer {
 }
 
 body.home .nav {
-    background: rgba(1, 1, 1, 0.32);
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    border-bottom-color: rgba(255, 255, 255, 0.08);
+    /* Slightly more transparent over the home video */
+    --nav-bg-alpha: 0.34;
+    --nav-backdrop-blur: 16px;
+}
+
+/* Visual page: full-bleed hero under fixed nav — same glass tuning as home */
+body:has(.section.section--art.section--art-flush) .nav {
+    --nav-bg-alpha: 0.38;
+    --nav-backdrop-blur: 16px;
 }
 
 body.home .hero.hero--split,
@@ -2926,9 +3045,33 @@ body.home .footer {
     width: 100%;
 }
 
+.page-nav-arrows__link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    flex-shrink: 0;
+    border: 1px solid var(--color-text-muted);
+    border-radius: 2px;
+    background: var(--color-elevated);
+    color: var(--color-text);
+    transition: border-color 0.2s, background 0.2s, color 0.2s;
+}
+
+.page-nav-arrows__link:hover {
+    border-color: var(--color-text);
+    color: var(--color-accent);
+    background: var(--color-surface);
+}
+
 .page-nav-arrows__link:focus-visible {
     outline: 2px solid var(--color-text);
     outline-offset: 3px;
+}
+
+.page-nav-arrows__tri {
+    display: block;
 }
 
 .footer {
@@ -2990,17 +3133,19 @@ body.home .footer {
         top: var(--nav-height);
         left: 0;
         right: 0;
-        background: var(--color-bg);
-        border-bottom: 1px solid var(--color-border);
+        background: rgba(1, 1, 1, 0.92);
+        backdrop-filter: blur(var(--nav-backdrop-blur));
+        -webkit-backdrop-filter: blur(var(--nav-backdrop-blur));
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         padding: 1rem 2rem 1.5rem;
         gap: 0.5rem;
     }
 
     body.home .nav__links.open {
-        background: rgba(1, 1, 1, 0.55);
+        background: rgba(1, 1, 1, 0.72);
         backdrop-filter: blur(18px);
         -webkit-backdrop-filter: blur(18px);
-        border-bottom-color: rgba(255, 255, 255, 0.1);
+        border-bottom-color: rgba(255, 255, 255, 0.12);
     }
     .nav__hamburger {
         display: flex;
@@ -3011,6 +3156,24 @@ body.home .footer {
 
     .nav__trailing {
         padding-right: 3.25rem;
+    }
+
+    /* Admin: icon only, white — no box on small screens */
+    .nav__admin-icon,
+    .nav__admin-icon:hover,
+    .nav__admin-icon.active {
+        border: none;
+        background: transparent;
+        border-radius: 0;
+        color: #fff;
+    }
+
+    .nav__admin-icon:focus-visible {
+        outline: 2px solid #fff;
+        outline-offset: 4px;
+        border: none;
+        background: transparent;
+        color: #fff;
     }
 
     .hero.hero--split .hero__split {
