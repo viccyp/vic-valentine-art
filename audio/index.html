@@ -231,7 +231,7 @@
         const client = await waitForSupabaseClient();
         if (gen !== __vvGigsLoadGen) return;
         if (!client) {
-            root.innerHTML = '<p class="music-gig-list__empty">Live shows unavailable — run <code>npm run config</code> and set <code>.env</code>.</p>';
+            root.innerHTML = '<p class="music-gig-list__empty">Loading&hellip; If the content does not appear, reload the page.</p>';
             return;
         }
         const { data: shows, error } = await client
@@ -335,7 +335,7 @@
         const root = document.getElementById('music-gigs-list');
         if (!root || root.querySelector('.music-gig-row')) return;
         const t = root.textContent || '';
-        if (root.querySelector('.music-gig-list__loading') || /npm run config|unavailable/i.test(t)) {
+        if (root.querySelector('.music-gig-list__loading') || /If the content does not appear/i.test(t)) {
             loadMusicGigs();
         }
     });

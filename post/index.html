@@ -93,7 +93,7 @@
         const client = await waitForSupabaseClient();
         if (gen !== __vvPostLoadGen) return;
         if (!client) {
-            el.innerHTML = '<p style="text-align:center; padding: calc(var(--nav-height) + 4rem) 2rem 4rem; color: var(--color-text-muted);max-width:40em;margin-inline:auto;">Post unavailable — add <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> to <code>.env</code>, run <code>npm run build</code>, or set those env vars on your host so <code>supabase-runtime.js</code> is generated on deploy.</p>';
+            el.innerHTML = '<p style="text-align:center; padding: calc(var(--nav-height) + 4rem) 2rem 4rem; color: var(--color-text-muted);max-width:40em;margin-inline:auto;">Loading&hellip; If the content does not appear, reload the page.</p>';
             return;
         }
 
@@ -140,7 +140,7 @@
         const el = document.getElementById('post-container');
         if (!el) return;
         const t = el.textContent || '';
-        if (/Post unavailable|npm run config|supabase-runtime/i.test(t)) {
+        if (/If the content does not appear/i.test(t)) {
             loadPostPage();
         }
     });

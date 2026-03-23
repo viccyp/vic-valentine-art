@@ -49,7 +49,7 @@ function getDb() {
 }
 
 /**
- * Wait until Supabase UMD + env globals are ready (avoids false "npm run config" on fast Turbo navigations).
+ * Wait until Supabase UMD + env globals are ready (avoids false empty client on fast Turbo navigations).
  */
 async function waitForSupabaseClient(maxMs = 3200) {
     if (!window.__SUPABASE_URL__ || !window.__SUPABASE_ANON_KEY__) {

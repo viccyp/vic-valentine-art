@@ -97,7 +97,7 @@
         const client = await waitForSupabaseClient();
         if (gen !== __vvBlogLoadGen) return;
         if (!client) {
-            list.innerHTML = '<p style="text-align:center;color:var(--color-text-muted);max-width:40em;margin-inline:auto;">Blog unavailable — add <code>SUPABASE_URL</code> and <code>SUPABASE_ANON_KEY</code> to <code>.env</code>, run <code>npm run build</code> locally, or set those variables on your host (e.g. Vercel) so deploy generates <code>supabase-runtime.js</code>.</p>';
+            list.innerHTML = '<p style="text-align:center;color:var(--color-text-muted);max-width:40em;margin-inline:auto;">Loading&hellip; If the content does not appear, reload the page.</p>';
             return;
         }
         const { data: posts, error } = await client.from('posts').select('*').eq('published', 1).order('created_at', { ascending: false });
@@ -128,7 +128,7 @@
         const list = document.getElementById('blog-list');
         if (!list) return;
         const t = list.textContent || '';
-        if (/Blog unavailable|npm run config|supabase-runtime/i.test(t)) {
+        if (/If the content does not appear|Could not load posts/i.test(t)) {
             loadBlogList();
         }
     });

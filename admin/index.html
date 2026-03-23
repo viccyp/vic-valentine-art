@@ -78,7 +78,7 @@
     (async () => {
         const container = document.getElementById('posts-list');
         if (!db) {
-            container.innerHTML = '<p style="color:var(--color-text-muted);">Admin unavailable — run <code>npm run config</code> and ensure <code>.env</code> is set.</p>';
+            container.innerHTML = '<p style="color:var(--color-text-muted);">Loading&hellip; If the content does not appear, reload the page.</p>';
             return;
         }
         const { data: { user } } = await db.auth.getUser();

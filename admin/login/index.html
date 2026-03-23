@@ -86,7 +86,7 @@
     document.getElementById('login-form').addEventListener('submit', async (e) => {
         e.preventDefault();
         if (!db) {
-            showFlash('Supabase is not configured. Run npm run config after adding .env.', 'error');
+            showFlash('Loading… If the content does not appear, reload the page.', 'error');
             return;
         }
         const email = document.getElementById('email').value.trim();
