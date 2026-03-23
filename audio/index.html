@@ -345,36 +345,36 @@
         }).join('');
 
         if (past.length) {
-            const hasMorePast = past.length > 2;
-            const viewClass =
-                'music-gig-past__viewport music-gig-past__viewport--collapsed' +
-                (hasMorePast ? ' music-gig-past__viewport--has-more' : '');
+            const panelId = 'music-gig-past-panel';
             html +=
                 '<div class="music-gig-past">' +
-                '<h4 class="music-gig-past__heading">Past shows</h4>' +
-                `<div class="${viewClass}" data-past-viewport>` +
-                '<div class="music-gig-past__inner" data-past-inner>' +
+                `<button type="button" class="music-gig-past__toggle" data-past-toggle aria-expanded="false" aria-controls="${panelId}" id="music-gig-past-toggle">` +
+                'Past shows' +
+                '</button>' +
+                `<div class="music-gig-past__panel" id="${panelId}" data-past-panel hidden>` +
+                '<div class="music-gig-past__inner">' +
                 past.map(function (s) {
                     return gigRowHtml(s, true);
                 }).join('') +
                 '</div>' +
-                '<div class="music-gig-past__fade" aria-hidden="true"></div>' +
                 '</div>' +
-                (hasMorePast
-                    ? '<button type="button" class="music-gig-past__more" data-past-more>See more</button>'
-                    : '') +
                 '</div>';
         }
 
         root.innerHTML = html;
 
-        const pastViewport = root.querySelector('[data-past-viewport]');
-        const pastMoreBtn = root.querySelector('[data-past-more]');
-        if (pastViewport && pastMoreBtn) {
-            pastMoreBtn.addEventListener('click', function () {
-                const expanded = pastViewport.classList.toggle('music-gig-past__viewport--expanded');
-                pastViewport.classList.toggle('music-gig-past__viewport--collapsed', !expanded);
-                pastMoreBtn.textContent = expanded ? 'See less' : 'See more';
+        const pastToggle = root.querySelector('[data-past-toggle]');
+        const pastPanel = root.querySelector('[data-past-panel]');
+        if (pastToggle && pastPanel) {
+            pastToggle.addEventListener('click', function () {
+                const open = pastPanel.hasAttribute('hidden');
+                if (open) {
+                    pastPanel.removeAttribute('hidden');
+                    pastToggle.setAttribute('aria-expanded', 'true');
+                } else {
+                    pastPanel.setAttribute('hidden', '');
+                    pastToggle.setAttribute('aria-expanded', 'false');
+                }
             });
         }
     }
