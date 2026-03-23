@@ -19,6 +19,35 @@ const db =
         ? window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY)
         : null;
 
+/** Singleton if `db` was null at parse time (e.g. library/env race on slow networks). */
+let __vvDbLazy = null;
+
+/**
+ * Prefer global `db`; otherwise build a client when globals exist.
+ * Use this from page scripts instead of `db` when timing may beat config.js.
+ */
+function getDb() {
+    if (db) return db;
+    if (__vvDbLazy) return __vvDbLazy;
+    if (
+        typeof window !== 'undefined' &&
+        window.supabase &&
+        window.__SUPABASE_URL__ &&
+        window.__SUPABASE_ANON_KEY__
+    ) {
+        try {
+            __vvDbLazy = window.supabase.createClient(
+                window.__SUPABASE_URL__,
+                window.__SUPABASE_ANON_KEY__
+            );
+            return __vvDbLazy;
+        } catch (_) {
+            return null;
+        }
+    }
+    return null;
+}
+
 function storageUrl(path) {
     return path ? `${SUPABASE_URL}/storage/v1/object/public/${STORAGE_BUCKET}/${path}` : '';
 }

@@ -208,20 +208,43 @@
     <script src="/static/js/music-spotify-player.js"></script>
     <script src="https://open.spotify.com/embed/iframe-api/v1" async></script>
     <script>
+    let __vvGigsLoadGen = 0;
+
+    async function waitForSupabaseClient(maxMs) {
+        if (!window.__SUPABASE_URL__ || !window.__SUPABASE_ANON_KEY__) {
+            return typeof getDb === 'function' ? getDb() : typeof db !== 'undefined' ? db : null;
+        }
+        const t0 = Date.now();
+        let c = typeof getDb === 'function' ? getDb() : typeof db !== 'undefined' ? db : null;
+        if (c) return c;
+        while (Date.now() - t0 < maxMs) {
+            await new Promise(function (r) {
+                setTimeout(r, 45);
+            });
+            c = typeof getDb === 'function' ? getDb() : typeof db !== 'undefined' ? db : null;
+            if (c) return c;
+        }
+        return typeof getDb === 'function' ? getDb() : typeof db !== 'undefined' ? db : null;
+    }
+
     async function loadMusicGigs() {
+        const gen = ++__vvGigsLoadGen;
         const root = document.getElementById('music-gigs-list');
         if (!root) return;
         root.innerHTML = '<p class="music-gig-list__loading">Loading&hellip;</p>';
-        if (!db) {
+        const client = await waitForSupabaseClient(2800);
+        if (gen !== __vvGigsLoadGen) return;
+        if (!client) {
             root.innerHTML = '<p class="music-gig-list__empty">Live shows unavailable — run <code>npm run config</code> and set <code>.env</code>.</p>';
             return;
         }
-        const { data: shows, error } = await db
+        const { data: shows, error } = await client
             .from('events')
             .select('id, name, event_date, location')
             .eq('is_published', true)
             .eq('category', 'music')
             .order('event_date', { ascending: false });
+        if (gen !== __vvGigsLoadGen) return;
         if (error) {
             root.innerHTML = '<p class="music-gig-list__empty">Could not load events. Run <code>scripts/events-music-public-rls.sql</code> in Supabase (RLS for <code>events</code>) and ensure rows are <code>is_published</code> and <code>category = music</code>.</p>';
             return;
@@ -312,6 +335,14 @@
     }
     document.addEventListener('DOMContentLoaded', loadMusicGigs);
     document.addEventListener('turbo:load', loadMusicGigs);
+    window.addEventListener('load', function () {
+        const root = document.getElementById('music-gigs-list');
+        if (!root || root.querySelector('.music-gig-row')) return;
+        const t = root.textContent || '';
+        if (root.querySelector('.music-gig-list__loading') || /npm run config|unavailable/i.test(t)) {
+            loadMusicGigs();
+        }
+    });
     </script>
 </body>
 </html>
