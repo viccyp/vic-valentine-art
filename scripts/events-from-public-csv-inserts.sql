@@ -1,0 +1,230 @@
+-- Generated from public/events_rows.csv — paste into Supabase SQL Editor.
+--
+-- Adjust the column list if your table differs (e.g. no is_featured).
+-- id omitted → default gen_random_uuid() (or add explicit ids).
+-- If `total_tickets` / `available_tickets` are NOT NULL, run scripts/events-tickets-nullable.sql first.
+--
+-- Location = venue + address + city (site only reads `location`).
+-- Dates: CSV mix of ISO and DD/MM/YYYY → all timestamptz at 20:00 UTC (tweak if you prefer local).
+
+insert into public.events (
+  name,
+  description,
+  event_date,
+  location,
+  price,
+  total_tickets,
+  available_tickets,
+  image_url,
+  is_published,
+  category,
+  is_featured
+) values
+  (
+    'Rory Dinwoodie at The Fungalow',
+    'Rory Dinwoodie live at The Fungalow.',
+    timestamptz '2026-04-28 20:00:00+00',
+    'The Fungalow, N15, London',
+    500,
+    100,
+    100,
+    null,
+    true,
+    'music',
+    false
+  ),
+  (
+    'Marianne Collective',
+    'Marianne Collective live at Hop Kingdom',
+    timestamptz '2026-02-07 20:00:00+00',
+    'Hop Kingdom, 27 Weston Street, Bermondsey, London SE1 3QJ, UK',
+    100,
+    100,
+    100,
+    null,
+    true,
+    'music',
+    false
+  ),
+  (
+    'Marianne Collective',
+    'Marianne Collective live at The Fungalow',
+    timestamptz '2025-09-27 20:00:00+00',
+    'The Fungalow, N15, London',
+    100,
+    100,
+    100,
+    null,
+    true,
+    'music',
+    false
+  ),
+  (
+    'Marianne Collective',
+    'Marianne Collective live at The Victoria',
+    timestamptz '2025-04-09 20:00:00+00',
+    'The Victoria, 451 Queensbridge Road, Dalston, London E8 3AS, UK',
+    100,
+    100,
+    100,
+    null,
+    true,
+    'music',
+    false
+  ),
+  (
+    'Marianne Collective',
+    'Marianne Collective live at Hope and Anchor',
+    timestamptz '2025-02-13 20:00:00+00',
+    'Hope and Anchor, 207 Upper Street, Islington, London N1 1RL, UK',
+    100,
+    100,
+    100,
+    null,
+    true,
+    'music',
+    false
+  ),
+  (
+    'Marianne Collective',
+    'Marianne Collective live at Lucindas',
+    timestamptz '2024-12-08 20:00:00+00',
+    'Lucindas, E8, London',
+    100,
+    100,
+    100,
+    null,
+    true,
+    'music',
+    false
+  ),
+  (
+    'Marianne Collective',
+    'Marianne Collective live at The Fiddler''s Elbow',
+    timestamptz '2024-11-09 20:00:00+00',
+    'The Fiddler''s Elbow, 1 Malden Road, Camden, London NW5 3HS, UK',
+    100,
+    100,
+    100,
+    null,
+    true,
+    'music',
+    false
+  ),
+  (
+    'Marianne Collective',
+    'Marianne Collective live at Sofar',
+    timestamptz '2024-10-06 20:00:00+00',
+    'Sofar, Battersea, London',
+    100,
+    100,
+    100,
+    null,
+    true,
+    'music',
+    false
+  ),
+  (
+    'Marianne Collective',
+    'Marianne Collective live at Bush Hall',
+    timestamptz '2024-04-27 20:00:00+00',
+    'Bush Hall, 310 Uxbridge Road, Shepherd''s Bush, London W12 7LJ, UK',
+    100,
+    100,
+    100,
+    null,
+    true,
+    'music',
+    false
+  ),
+  (
+    'Marianne Collective',
+    'Marianne Collective live at Sindercombe Social',
+    timestamptz '2024-02-24 20:00:00+00',
+    'Sindercombe Social, 2 Goldhawk Road, Shepherd''s Bush, London W12 8QD, UK',
+    100,
+    100,
+    100,
+    null,
+    true,
+    'music',
+    false
+  ),
+  (
+    'McDermott & North',
+    'McDermott & North live at The Star in Shoreditch',
+    timestamptz '2026-01-16 20:00:00+00',
+    'The Star in Shoreditch, London',
+    100,
+    100,
+    100,
+    null,
+    true,
+    'music',
+    false
+  ),
+  (
+    'Live 45s',
+    'Live 45s live at Nambucca',
+    timestamptz '2025-11-07 20:00:00+00',
+    'Nambucca, London',
+    100,
+    100,
+    100,
+    null,
+    true,
+    'music',
+    false
+  ),
+  (
+    'Gideon Black',
+    'Gideon Black live at The Troubadour',
+    timestamptz '2025-11-01 20:00:00+00',
+    'The Troubadour, London',
+    100,
+    100,
+    100,
+    null,
+    true,
+    'music',
+    false
+  ),
+  (
+    'Bella Gate',
+    'Bella Gate live at Peronne',
+    timestamptz '2025-09-19 20:00:00+00',
+    'Peronne, France',
+    100,
+    100,
+    100,
+    null,
+    true,
+    'music',
+    false
+  ),
+  (
+    'McDermott & North',
+    'McDermott & North live at The Star in Shoreditch',
+    timestamptz '2025-11-26 20:00:00+00',
+    'The Star in Shoreditch, London',
+    100,
+    100,
+    100,
+    null,
+    true,
+    'music',
+    false
+  ),
+  (
+    'McDermott & North',
+    'McDermott & North live at Jam in a Jar',
+    timestamptz '2026-04-24 20:00:00+00',
+    'Jam in a Jar, 599-601 Green Lanes, Harringay Ladder, London N8 0RE',
+    0,
+    null,
+    null,
+    null,
+    true,
+    'music',
+    false
+  );

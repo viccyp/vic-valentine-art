@@ -90,7 +90,7 @@
 
         const { data: show, error: showErr } = await db
             .from('events')
-            .select('id, name, description, event_date, location, price, total_tickets, available_tickets, image_url, category, is_published')
+            .select('id, name, description, event_date, location, price, image_url, category, is_published')
             .eq('id', id)
             .eq('is_published', true)
             .eq('category', 'music')
@@ -116,13 +116,19 @@
             ? `<div class="music-event__description"><p>${escHtml(show.description).replace(/\n/g, '<br>')}</p></div>`
             : '';
 
-        const priceLine = show.price != null && String(show.price).trim() !== ''
-            ? `<p class="music-event__meta-line">Price: ${escHtml(String(show.price))}</p>`
-            : '';
-        let ticketsLine = '';
-        if (show.available_tickets != null && show.total_tickets != null) {
-            ticketsLine = `<p class="music-event__meta-line">Tickets: ${escHtml(String(show.available_tickets))} left of ${escHtml(String(show.total_tickets))}</p>`;
-        }
+        const today = new Date();
+        const startOfLocalDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        const eventStart = show.event_date ? new Date(show.event_date) : null;
+        const pastEvent =
+            !!(
+                eventStart &&
+                !Number.isNaN(eventStart.getTime()) &&
+                startOfLocalDay(eventStart) < startOfLocalDay(today)
+            );
+        const priceLine =
+            !pastEvent && show.price != null && String(show.price).trim() !== ''
+                ? `<p class="music-event__meta-line">Price: ${escHtml(String(show.price))}</p>`
+                : '';
 
         const galleryItems = [];
         const mainImg = absolutHttpUrl(show.image_url);
@@ -151,7 +157,6 @@
                     <p class="music-event__when"><time datetime="${escHtml((show.event_date || '').slice(0, 16))}">${escHtml(when)}</time></p>
                     <p class="music-event__location">${loc}</p>
                     ${priceLine}
-                    ${ticketsLine}
                 </div>
             </header>
             <div class="music-event__body">

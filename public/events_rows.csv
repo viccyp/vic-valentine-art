@@ -1,0 +1,17 @@
+id,name,description,event_date,location,address,city,price,total_tickets,available_tickets,image_url,is_published,category,is_featured,created_at,updated_at
+,Rory Dinwoodie at The Fungalow,Rory Dinwoodie live at The Fungalow.,2026-04-28 20:00:00+00,The Fungalow,N15,London,500,100,100,,TRUE,music,FALSE,2026-03-15 19:47:20.42231+00,2026-03-15 19:47:47.539188+00
+,Marianne Collective,Marianne Collective live at Hop Kingdom,07/02/2026,Hop Kingdom,"27 Weston Street, Bermondsey, London SE1 3QJ, UK",London,100,100,100,,TRUE,music,FALSE,2026-03-23 00:01:20.43155+00,2026-03-23 00:01:20.43155+00
+,Marianne Collective,Marianne Collective live at The Fungalow,27/09/2025,The Fungalow,N15,London,100,100,100,,TRUE,music,FALSE,2026-03-23 00:01:20.43155+00,2026-03-23 00:01:20.43155+00
+,Marianne Collective,Marianne Collective live at The Victoria,09/04/2025,The Victoria,"451 Queensbridge Road, Dalston, London E8 3AS, UK",London,100,100,100,,TRUE,music,FALSE,2026-03-23 00:01:20.43155+00,2026-03-23 00:01:20.43155+00
+,Marianne Collective,Marianne Collective live at Hope and Anchor,13/02/2025,Hope and Anchor,"207 Upper Street, Islington, London N1 1RL, UK",London,100,100,100,,TRUE,music,FALSE,2026-03-23 00:01:20.43155+00,2026-03-23 00:01:20.43155+00
+,Marianne Collective,Marianne Collective live at Lucindas,08/12/2024,Lucindas,E8,London,100,100,100,,TRUE,music,FALSE,2026-03-23 00:01:20.43155+00,2026-03-23 00:01:20.43155+00
+,Marianne Collective,Marianne Collective live at The Fiddler’s Elbow,09/11/2024,The Fiddler’s Elbow,"1 Malden Road, Camden, London NW5 3HS, UK",London,100,100,100,,TRUE,music,FALSE,2026-03-23 00:01:20.43155+00,2026-03-23 00:01:20.43155+00
+,Marianne Collective,Marianne Collective live at Sofar,06/10/2024,Sofar,Battersea,London,100,100,100,,TRUE,music,FALSE,2026-03-23 00:01:20.43155+00,2026-03-23 00:01:20.43155+00
+,Marianne Collective,Marianne Collective live at Bush Hall,27/04/2024,Bush Hall,"310 Uxbridge Road, Shepherd’s Bush, London W12 7LJ, UK",London,100,100,100,,TRUE,music,FALSE,2026-03-23 00:01:20.43155+00,2026-03-23 00:01:20.43155+00
+,Marianne Collective,Marianne Collective live at Sindercombe Social,24/02/2024,Sindercombe Social,"2 Goldhawk Road, Shepherd’s Bush, London W12 8QD, UK",London,100,100,100,,TRUE,music,FALSE,2026-03-23 00:01:20.43155+00,2026-03-23 00:01:20.43155+00
+,McDermott & North,McDermott & North live at The Star in Shoreditch,16/01/2026,The Star in Shoreditch,The Star in Shoreditch,London,100,100,100,,TRUE,music,FALSE,2026-03-23 00:01:20.43155+00,2026-03-23 00:01:20.43155+00
+,Live 45s,Live 45s live at Nambucca,07/11/2025,Nambucca,Nambucca,London,100,100,100,,TRUE,music,FALSE,2026-03-23 00:01:20.43155+00,2026-03-23 00:01:20.43155+00
+,Gideon Black,Gideon Black live at The Troubadour,01/11/2025,The Troubadour,The Troubadour,London,100,100,100,,TRUE,music,FALSE,2026-03-23 00:01:20.43155+00,2026-03-23 00:01:20.43155+00
+,Bella Gate,Bella Gate live at Peronne,19/09/2025,Peronne,Peronne,France,100,100,100,,TRUE,music,FALSE,2026-03-23 00:01:20.43155+00,2026-03-23 00:01:20.43155+00
+,McDermott & North,McDermott & North live at The Star in Shoreditch,26/11/2025,The Star in Shoreditch,The Star in Shoreditch,London,100,100,100,,TRUE,music,FALSE,2026-03-23 00:01:20.43155+00,2026-03-23 00:01:20.43155+00
+,McDermott & North,McDermott & North live at Jam in a Jar,24/04/2026,Jam in a Jar,"599-601 Green Lanes, Harringay Ladder, London N8 0RE",London,0,,,,TRUE,music,FALSE,2026-03-23 00:01:20.43155+00,2026-03-23 00:01:20.43155+00

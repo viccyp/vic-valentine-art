@@ -230,20 +230,85 @@
             root.innerHTML = '<p class="music-gig-list__empty">No published events yet. Add rows in <code>events</code> with <code>category</code> set to <code>music</code> and <code>is_published</code> on.</p>';
             return;
         }
-        root.innerHTML = shows.map(s => {
+
+        function startOfLocalDay(d) {
+            return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        }
+        function gigIsPast(iso) {
+            if (!iso) return false;
+            const ev = new Date(iso);
+            if (Number.isNaN(ev.getTime())) return false;
+            return startOfLocalDay(ev) < startOfLocalDay(new Date());
+        }
+
+        const upcoming = [];
+        const past = [];
+        shows.forEach(function (s) {
+            (gigIsPast(s.event_date) ? past : upcoming).push(s);
+        });
+        upcoming.sort(function (a, b) {
+            return new Date(a.event_date) - new Date(b.event_date);
+        });
+        past.sort(function (a, b) {
+            return new Date(b.event_date) - new Date(a.event_date);
+        });
+
+        function gigRowHtml(s, isPastRow) {
             const when = formatDate(s.event_date);
             const venue = escHtml(s.location || '');
             const headline = escHtml(s.name || 'Event');
+            const dt = escHtml((s.event_date || '').slice(0, 16));
+            const side = isPastRow
+                ? '<span class="music-gig-row__past-label">Past</span>'
+                : `<a class="music-gig-row__btn" href="/audio/event/?id=${encodeURIComponent(s.id)}">Info</a>`;
             return `
-            <article class="music-gig-row">
+            <article class="music-gig-row${isPastRow ? ' music-gig-row--past' : ''}"${isPastRow ? ' aria-label="Past show"' : ''}>
                 <div class="music-gig-row__text">
-                    <time class="music-gig-row__date" datetime="${escHtml((s.event_date || '').slice(0, 16))}">${escHtml(when)}</time>
+                    <time class="music-gig-row__date" datetime="${dt}">${escHtml(when)}</time>
                     <h4 class="music-gig-row__title">${headline}</h4>
                     <p class="music-gig-row__meta">${venue || '\u00a0'}</p>
                 </div>
-                <a class="music-gig-row__btn" href="/audio/event/?id=${encodeURIComponent(s.id)}">Info</a>
+                ${side}
             </article>`;
+        }
+
+        let html = upcoming.map(function (s) {
+            return gigRowHtml(s, false);
         }).join('');
+
+        if (past.length) {
+            const hasMorePast = past.length > 2;
+            const viewClass =
+                'music-gig-past__viewport music-gig-past__viewport--collapsed' +
+                (hasMorePast ? ' music-gig-past__viewport--has-more' : '');
+            html +=
+                '<div class="music-gig-past">' +
+                '<h4 class="music-gig-past__heading">Past shows</h4>' +
+                `<div class="${viewClass}" data-past-viewport>` +
+                '<div class="music-gig-past__inner" data-past-inner>' +
+                past.map(function (s) {
+                    return gigRowHtml(s, true);
+                }).join('') +
+                '</div>' +
+                '<div class="music-gig-past__fade" aria-hidden="true"></div>' +
+                '</div>' +
+                (hasMorePast
+                    ? '<button type="button" class="music-gig-past__more" data-past-more>See more</button>'
+                    : '') +
+                '</div>';
+        }
+
+        root.innerHTML = html;
+
+        const pastViewport = root.querySelector('[data-past-viewport]');
+        const pastMoreBtn = root.querySelector('[data-past-more]');
+        if (pastViewport && pastMoreBtn) {
+            pastMoreBtn.addEventListener('click', function () {
+                const expanded = pastViewport.classList.toggle('music-gig-past__viewport--expanded');
+                pastViewport.classList.toggle('music-gig-past__viewport--collapsed', !expanded);
+                pastMoreBtn.textContent = expanded ? 'See less' : 'See more';
+            });
+        }
     }
     document.addEventListener('DOMContentLoaded', loadMusicGigs);
     document.addEventListener('turbo:load', loadMusicGigs);
