@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- @include partials/head.html -->
+    <title>Loading… — Vic Valentine</title>
+</head>
+<body>
+<!-- @include partials/nav.html -->
+
+    <main>
+        <article class="photoblog-post" id="post-container">
+            <p style="text-align:center; padding: calc(var(--nav-height) + 4rem) 2rem 4rem; color: var(--color-text-muted);">Loading&hellip;</p>
+        </article>
+    </main>
+
+<!-- @include partials/footer.html -->
+<!-- @include partials/music-dock.html -->
+<!-- @include partials/lightbox.html -->
+<!-- @include partials/scripts.html -->
+    <script>
+    let __vvPostLoadGen = 0;
+
+    async function loadPostPage() {
+        const gen = ++__vvPostLoadGen;
+        const slug = new URLSearchParams(location.search).get('slug');
+        if (!slug) { window.location.href = '/mag/'; return; }
+
+        const el = document.getElementById('post-container');
+        if (!el) return;
+        el.innerHTML = '<p style="text-align:center; padding: calc(var(--nav-height) + 4rem) 2rem 4rem; color: var(--color-text-muted);">Loading&hellip;</p>';
+        const client = await waitForSupabaseClient();
+        if (gen !== __vvPostLoadGen) return;
+        if (!client) {
+            el.innerHTML = '<p style="text-align:center; padding: calc(var(--nav-height) + 4rem) 2rem 4rem; color: var(--color-text-muted);max-width:40em;margin-inline:auto;">Loading&hellip; If the content does not appear, reload the page.</p>';
+            return;
+        }
+
+        const { data: post, error } = await client.from('posts').select('*').eq('slug', slug).eq('published', 1).single();
+        if (gen !== __vvPostLoadGen) return;
+
+        if (error || !post) {
+            el.innerHTML = '<p style="text-align:center; padding: calc(var(--nav-height) + 4rem) 2rem 4rem; color: var(--color-text-muted);">Article not found.</p>';
+            return;
+        }
+
+        document.title = `${post.title} — Vic Valentine`;
+        const created = formatDate(post.created_at);
+        const updated = formatDate(post.updated_at);
+        const showUpdated = (post.updated_at || '').slice(0, 10) !== (post.created_at || '').slice(0, 10);
+
+        let contentHtml = post.body_html || '';
+        if (!contentHtml) {
+            let blocks; try { blocks = JSON.parse(post.body); } catch { blocks = []; }
+            contentHtml = renderBlocksToHtml(Array.isArray(blocks) ? blocks : []);
+        }
+
+        el.innerHTML = `
+            <header class="photoblog-post__header">
+                <div class="container container--narrow">
+                    <h1 class="photoblog-post__title">${escHtml(post.title)}</h1>
+                    <div class="photoblog-post__meta">
+                        <span class="photoblog-post__author">Vic Valentine</span>
+                        <span class="photoblog-post__meta-sep" aria-hidden="true">&middot;</span>
+                        <time class="photoblog-post__date">${created}</time>
+                        <span class="photoblog-post__meta-sep" aria-hidden="true">&middot;</span>
+                        <span class="photoblog-post__read">${readTime(post)} min read</span>
+                    </div>
+                    ${showUpdated ? `<p class="photoblog-post__updated">Updated: ${updated}</p>` : ''}
+                </div>
+            </header>
+            <div class="photoblog-post__content">
+                <div class="container container--narrow">${contentHtml}</div>
+            </div>`;
+    }
+    document.addEventListener('DOMContentLoaded', loadPostPage);
+    document.addEventListener('turbo:load', loadPostPage);
+    window.addEventListener('load', function () {
+        const el = document.getElementById('post-container');
+        if (!el) return;
+        const t = el.textContent || '';
+        if (/If the content does not appear/i.test(t)) {
+            loadPostPage();
+        }
+    });
+    </script>
+</body>
+</html>

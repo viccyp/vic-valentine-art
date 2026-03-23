@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- @include partials/head.html -->
+    <title>Mag — Vic Valentine</title>
+</head>
+<body>
+<!-- @include partials/nav.html -->
+
+    <main>
+        <section class="section" style="padding-top: calc(var(--nav-height) + 4rem);">
+            <div class="container">
+                <div class="section__header">
+                    <h2>Mag</h2>
+                </div>
+                <div class="mag-grid" id="blog-list">
+                    <p style="text-align: center; color: var(--color-text-muted);">Loading&hellip;</p>
+                </div>
+            </div>
+        </section>
+    </main>
+
+<!-- @include partials/footer.html -->
+<!-- @include partials/music-dock.html -->
+<!-- @include partials/lightbox.html -->
+<!-- @include partials/scripts.html -->
+    <script>
+    let __vvMagLoadGen = 0;
+
+    async function loadMagList() {
+        const gen = ++__vvMagLoadGen;
+        const list = document.getElementById('blog-list');
+        if (!list) return;
+        list.innerHTML = '<p style="text-align: center; color: var(--color-text-muted);">Loading&hellip;</p>';
+        const client = await waitForSupabaseClient();
+        if (gen !== __vvMagLoadGen) return;
+        if (!client) {
+            list.innerHTML = '<p style="text-align:center;color:var(--color-text-muted);max-width:40em;margin-inline:auto;">Loading&hellip; If the content does not appear, reload the page.</p>';
+            return;
+        }
+
+        const { data: posts, error } = await client
+            .from('posts')
+            .select('*')
+            .eq('published', 1)
+            .order('created_at', { ascending: false });
+
+        if (gen !== __vvMagLoadGen) return;
+        if (error) {
+            list.innerHTML = `<p style="text-align:center;color:var(--color-text-muted);max-width:36em;margin-inline:auto;">Could not load articles (${escHtml(error.message)}). Check the browser Network tab for <code>rest/v1/posts</code>, confirm <code>npm run build</code> on deploy creates <code>supabase-runtime.js</code>, and run <code>scripts/posts-blog-schema.sql</code> in Supabase (RLS + <code>posts</code> table).</p>`;
+            return;
+        }
+
+        if (!posts || !posts.length) {
+            list.innerHTML = '<p style="text-align:center;color:var(--color-text-muted);">No articles yet. Publish an article in Admin or set <code>published = 1</code> on rows in the <code>posts</code> table.</p>';
+            return;
+        }
+
+        list.innerHTML = posts
+            .map(p => `
+            <a href="/post/?slug=${encodeURIComponent(p.slug)}" class="mag-card">
+                <div class="mag-card__image">
+                    <img src="${p.cover_image ? storageUrl(p.cover_image) : 'https://placehold.co/800x500/1a1a1a/333?text=No+Cover'}" alt="${escHtml(p.cover_alt || '')}">
+                </div>
+                <div class="mag-card__body">
+                    <h3 class="mag-card__title">${escHtml(p.title)}</h3>
+                    <p class="mag-card__subheading">${escHtml(p.subheading || '')}</p>
+                </div>
+            </a>`)
+            .join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', loadMagList);
+    document.addEventListener('turbo:load', loadMagList);
+
+    window.addEventListener('load', function () {
+        const list = document.getElementById('blog-list');
+        if (!list) return;
+        const t = list.textContent || '';
+        if (/If the content does not appear|Could not load articles/i.test(t)) {
+            loadMagList();
+        }
+    });
+    </script>
+</body>
+</html>
+

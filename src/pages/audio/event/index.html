@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- @include partials/head.html -->
+    <title>Event — Vic Valentine</title>
+</head>
+<body>
+<!-- @include partials/nav.html -->
+
+    <main>
+        <article class="music-event" id="music-event-root">
+            <p class="music-event__loading">Loading&hellip;</p>
+        </article>
+    </main>
+
+<!-- @include partials/footer.html -->
+<!-- @include partials/music-dock.html -->
+<!-- @include partials/lightbox.html -->
+<!-- @include partials/scripts.html -->
+    <script>
+    let __vvEventLoadGen = 0;
+
+    async function loadMusicEventPage() {
+        const gen = ++__vvEventLoadGen;
+        const id = new URLSearchParams(location.search).get('id');
+        const el = document.getElementById('music-event-root');
+        if (!el) return;
+        if (!id || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(id)) {
+            el.innerHTML = '<p class="music-event__empty"><a href="/audio/">Back to Audio</a></p>';
+            return;
+        }
+        el.innerHTML = '<p class="music-event__loading">Loading&hellip;</p>';
+        const client = await waitForSupabaseClient();
+        if (gen !== __vvEventLoadGen) return;
+        if (!client) {
+            el.innerHTML = '<p class="music-event__empty">Loading&hellip; If the content does not appear, reload the page. <a href="/audio/">Back to Audio</a></p>';
+            return;
+        }
+
+        function absolutHttpUrl(u) {
+            if (!u || typeof u !== 'string') return '';
+            try {
+                const x = new URL(u);
+                return x.protocol === 'http:' || x.protocol === 'https:' ? x.href : '';
+            } catch (_) { return ''; }
+        }
+
+        function extractCityFromLocation(location) {
+            if (!location || typeof location !== 'string') return '';
+            const parts = location
+                .split(',')
+                .map(p => p.trim())
+                .filter(Boolean);
+            if (!parts.length) return '';
+
+            // Approximate "city" by dropping trailing country tokens in `location`.
+            const countryHints = new Set([
+                'uk',
+                'us',
+                'usa',
+                'france',
+                'germany',
+                'spain',
+                'italy',
+                'ireland',
+                'canada',
+                'australia',
+                'new zealand',
+                'netherlands',
+                'sweden',
+                'norway',
+                'denmark',
+                'finland',
+                'belgium',
+                'switzerland',
+                'austria',
+                'portugal',
+                'greece',
+                'poland',
+                'japan',
+                'china',
+                'korea',
+                'singapore',
+                'hong kong',
+                'south africa',
+                'india',
+                'russia'
+            ]);
+
+            while (parts.length) {
+                const last = parts[parts.length - 1];
+                const lower = last.toLowerCase();
+                const looksLikeCountryAbbr = /^[A-Z]{2,4}$/.test(last);
+                if (looksLikeCountryAbbr || countryHints.has(lower)) {
+                    parts.pop();
+                    continue;
+                }
+                break;
+            }
+
+            const rawCity = parts[parts.length - 1] || '';
+            // Strip UK-style postcodes from the end of the city (e.g. "SE1 3QJ").
+            const postcodeRegex = /\b[A-Z]{1,2}\d{1,2}[A-Z]?\s?\d[A-Z]{2}\b/i;
+            const cleaned = rawCity
+                .replace(postcodeRegex, '')
+                .replace(/\s{2,}/g, ' ')
+                .trim();
+            return cleaned || rawCity.trim();
+        }
+
+        const { data: show, error: showErr } = await client
+            .from('events')
+            .select('id, name, description, event_date, location, price, image_url, category, is_published')
+            .eq('id', id)
+            .eq('is_published', true)
+            .eq('category', 'music')
+            .maybeSingle();
+
+        if (showErr || !show) {
+            el.innerHTML = '<p class="music-event__empty">Event not found. <a href="/audio/">Back to Audio</a></p>';
+            return;
+        }
+
+        const { data: extraRows } = await db
+            .from('event_gallery_images')
+            .select('image_url, sort_order')
+            .eq('event_id', show.id)
+            .order('sort_order', { ascending: true });
+
+        const title = show.name || 'Event';
+        document.title = `${title} — Vic Valentine`;
+
+        const when = formatDate(show.event_date);
+        const loc = escHtml(show.location || '');
+        const desc = show.description
+            ? `<div class="music-event__description"><p>${escHtml(show.description).replace(/\n/g, '<br>')}</p></div>`
+            : '';
+
+        const today = new Date();
+        const startOfLocalDay = (d) => new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        const eventStart = show.event_date ? new Date(show.event_date) : null;
+        const pastEvent =
+            !!(
+                eventStart &&
+                !Number.isNaN(eventStart.getTime()) &&
+                startOfLocalDay(eventStart) < startOfLocalDay(today)
+            );
+        const priceLine =
+            !pastEvent && show.price != null && String(show.price).trim() !== ''
+                ? `<p class="music-event__meta-line">Price: ${escHtml(String(show.price))}</p>`
+                : '';
+
+        const galleryItems = [];
+        const mainImg = absolutHttpUrl(show.image_url);
+        if (mainImg) galleryItems.push({ src: mainImg, alt: title });
+        if (extraRows && extraRows.length) {
+            for (const row of extraRows) {
+                const src = absolutHttpUrl(row.image_url);
+                if (src && !galleryItems.some(g => g.src === src)) galleryItems.push({ src, alt: title });
+            }
+        }
+
+        const gallery = galleryItems.length
+            ? `<div class="music-event__gallery">
+                <h2 class="music-event__gallery-title">Gallery</h2>
+                <div class="music-event__gallery-grid">
+                    ${galleryItems.map(g => `<figure class="music-event__figure" data-lightbox><img src="${g.src}" alt="${escHtml(g.alt)}"></figure>`).join('')}
+                </div>
+               </div>`
+            : '';
+
+        if (gen !== __vvEventLoadGen) return;
+        el.innerHTML = `
+            <header class="music-event__header">
+                <div class="container container--narrow">
+                    <p class="music-event__back"><a href="/audio/">← Audio</a></p>
+                    <h1 class="music-event__title">${escHtml(title)}</h1>
+                    <p class="music-event__when"><time datetime="${escHtml((show.event_date || '').slice(0, 16))}">${escHtml(when)}</time></p>
+                    <p class="music-event__location">${loc}</p>
+                    ${priceLine}
+                </div>
+            </header>
+            <div class="music-event__body">
+                <div class="container container--narrow">
+                    ${desc}
+                    ${gallery}
+                </div>
+            </div>`;
+    }
+    document.addEventListener('DOMContentLoaded', loadMusicEventPage);
+    document.addEventListener('turbo:load', loadMusicEventPage);
+    window.addEventListener('load', function () {
+        const el = document.getElementById('music-event-root');
+        if (!el) return;
+        const t = el.textContent || '';
+        if (el.querySelector('.music-event__loading') || /If the content does not appear/i.test(t)) {
+            loadMusicEventPage();
+        }
+    });
+    </script>
+</body>
+</html>

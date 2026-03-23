@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- @include partials/head-admin.html -->
+    <title>Login — Vic Valentine</title>
+</head>
+<body>
+<!-- @include partials/nav.html -->
+
+    <main>
+        <div class="login-page">
+            <div class="login-box">
+                <h1>Login</h1>
+                <form id="login-form">
+                    <div class="form-group">
+                        <label for="email">Email</label>
+                        <input type="email" id="email" required autofocus>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Password</label>
+                        <input type="password" id="password" required>
+                    </div>
+                    <button type="submit" class="btn btn--primary" style="width: 100%;">Log In</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+<!-- @include partials/footer.html -->
+<!-- @include partials/scripts-admin.html -->
+    <script>
+    (async () => {
+        if (!db) return;
+        const { data: { user } } = await db.auth.getUser();
+        if (user) { location.href = '/admin/'; return; }
+    })();
+
+    document.getElementById('login-form').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        if (!db) {
+            showFlash('Loading… If the content does not appear, reload the page.', 'error');
+            return;
+        }
+        const email = document.getElementById('email').value.trim();
+        const password = document.getElementById('password').value;
+
+        const { data, error } = await db.auth.signInWithPassword({ email, password });
+        if (error) {
+            showFlash(error.message, 'error');
+            return;
+        }
+        location.href = '/admin/';
+    });
+    </script>
+</body>
+</html>

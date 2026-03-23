@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- @include partials/head.html -->
+    <title>Home — Vic Valentine</title>
+</head>
+<body class="home">
+    <div class="page-bg-video" aria-hidden="true">
+        <video class="page-bg-video__media" autoplay muted loop playsinline webkit-playsinline preload="auto" tabindex="-1" disablepictureinpicture controlslist="nodownload nofullscreen noremoteplayback noplaybackrate" data-desktop-src="/public/istanbul.mp4" data-mobile-src="/public/istanbul-mobile.mp4"></video>
+        <div class="page-bg-video__veil"></div>
+    </div>
+<!-- @include partials/nav.html -->
+
+    <main class="home-main">
+        <section class="hero hero--split hero--below-video">
+            <div class="container hero__split">
+                <figure class="hero__media hero-reveal">
+                    <img src="/public/vic.JPG" alt="Vic Valentine" width="560" height="747">
+                </figure>
+                <div class="hero__content">
+                    <div class="hero-reveal hero-reveal--copy">
+                        <h1>Vic Valentine</h1>
+                        <p class="hero__intro">Drummer, producer, bassist, filmmaker & editor, web & software developer. Based in London.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <div class="home-enter-bar">
+            <div class="container home-enter-bar__inner">
+                <a href="/visual/" class="btn btn--outline home-enter">enter</a>
+            </div>
+        </div>
+    </main>
+
+<!-- @include partials/footer.html -->
+<!-- @include partials/music-dock.html -->
+<!-- @include partials/lightbox.html -->
+<!-- @include partials/scripts.html -->
+    <script>
+    (function () {
+        const bg = document.querySelector('.page-bg-video');
+        const heroSplit = document.querySelector('.hero__split');
+        const heroReveals = document.querySelectorAll('.hero-reveal');
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const maxVeilScroll = 520;
+
+        function onScroll() {
+            if (bg) {
+                const y = window.scrollY || document.documentElement.scrollTop;
+                const t = Math.min(1, y / maxVeilScroll);
+                bg.style.setProperty('--home-veil-blur', (t * 12).toFixed(2) + 'px');
+                bg.style.setProperty('--home-veil-alpha', (t * 0.38).toFixed(4));
+            }
+            if (!heroSplit || !heroReveals.length) return;
+            if (reduceMotion) {
+                heroReveals.forEach(function (el) {
+                    el.style.filter = '';
+                    el.style.opacity = '';
+                });
+                return;
+            }
+            const rect = heroSplit.getBoundingClientRect();
+            const vh = window.innerHeight || 1;
+            const blurStart = vh * 0.88;
+            const blurEnd = vh * 0.42;
+            let revealT;
+            if (rect.top >= blurStart) revealT = 0;
+            else if (rect.top <= blurEnd) revealT = 1;
+            else revealT = (blurStart - rect.top) / (blurStart - blurEnd);
+            const blurPx = (1 - revealT) * 14;
+            const opacity = 0.36 + revealT * 0.64;
+            const filter = 'blur(' + blurPx.toFixed(2) + 'px)';
+            const op = opacity.toFixed(3);
+            heroReveals.forEach(function (el) {
+                el.style.filter = filter;
+                el.style.opacity = op;
+            });
+        }
+
+        onScroll();
+        window.addEventListener('scroll', onScroll, { passive: true });
+        window.addEventListener('resize', onScroll, { passive: true });
+    })();
+    </script>
+</body>
+</html>

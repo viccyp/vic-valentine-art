@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- @include partials/head-admin.html -->
+    <title>Admin Dashboard — Vic Valentine</title>
+</head>
+<body>
+<!-- @include partials/nav.html -->
+
+    <main>
+        <div class="admin-layout">
+            <div class="container">
+                <div class="admin-header">
+                    <h2>Mag Articles</h2>
+                    <div>
+                        <a href="/admin/edit/" class="btn btn--primary btn--small">New Article</a>
+                        <button id="logout-btn" class="btn btn--outline btn--small" style="margin-left: 0.5rem;">Log Out</button>
+                    </div>
+                </div>
+                <div id="posts-list">
+                    <p style="color: var(--color-text-muted);">Loading&hellip;</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+<!-- @include partials/footer.html -->
+<!-- @include partials/scripts-admin.html -->
+    <script>
+    (async () => {
+        const container = document.getElementById('posts-list');
+        if (!db) {
+            container.innerHTML = '<p style="color:var(--color-text-muted);">Loading&hellip; If the content does not appear, reload the page.</p>';
+            return;
+        }
+        const { data: { user } } = await db.auth.getUser();
+        if (!user) { location.href = '/admin/login/'; return; }
+
+        const { data: posts } = await db.from('posts').select('*').order('created_at', { ascending: false });
+
+        if (!posts || !posts.length) {
+            container.innerHTML = '<p style="color: var(--color-text-muted);">No articles yet. Create your first one.</p>';
+            return;
+        }
+
+        container.innerHTML = `
+            <table class="admin-table">
+                <thead><tr><th>Title</th><th>Status</th><th>Created</th><th>Actions</th></tr></thead>
+                <tbody>${posts.map(p => `
+                    <tr>
+                        <td><a href="/admin/edit/?id=${p.id}">${escHtml(p.title)}</a></td>
+                        <td><span class="status-badge ${p.published ? 'status-badge--published' : 'status-badge--draft'}">${p.published ? 'Published' : 'Draft'}</span></td>
+                        <td style="color:var(--color-text-muted);font-size:0.85rem;">${(p.created_at || '').slice(0, 10)}</td>
+                        <td>
+                            <a href="/admin/edit/?id=${p.id}" style="margin-right:1rem;font-size:0.85rem;">Edit</a>
+                            <button onclick="deletePost(${p.id})" style="background:none;border:none;color:var(--color-error);font-size:0.85rem;cursor:pointer;">Delete</button>
+                        </td>
+                    </tr>`).join('')}
+                </tbody>
+            </table>`;
+    })();
+
+    document.getElementById('logout-btn').addEventListener('click', async () => {
+        if (db) await db.auth.signOut();
+        location.href = '/';
+    });
+
+    async function deletePost(id) {
+        if (!db) return;
+        if (!confirm('Delete this article?')) return;
+        const { error } = await db.from('posts').delete().eq('id', id);
+        if (error) { showFlash('Delete failed: ' + error.message, 'error'); return; }
+        showFlash('Article deleted.', 'success');
+        location.reload();
+    }
+    </script>
+</body>
+</html>

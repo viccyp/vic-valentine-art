@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<!-- @include partials/head.html -->
+    <title>Audio — Vic Valentine</title>
+</head>
+<body class="page-audio">
+<!-- @include partials/nav.html -->
+
+    <main>
+        <section class="section section--audio">
+            <div class="container">
+                <header class="section__header">
+                    <h2>Audio</h2>
+                    <p>live shows, tickets, credits, favourites, collection of sounds</p>
+                </header>
+
+                <article class="music-block music-block--gigs" id="shows">
+                    <h3 class="music-block__title">Live Shows</h3>
+                    <div class="music-gig-list" id="music-gigs-list">
+                        <p class="music-gig-list__loading">Loading&hellip;</p>
+                    </div>
+                </article>
+
+                <div class="music-split">
+                    <article class="music-block music-block--split-left" id="credits">
+                        <div class="music-credits-header">
+                            <div class="music-credits-header__text">
+                                <h3 class="music-block__title">Credits</h3>
+                                <p class="music-block__lead">Tracks I've played drums on</p>
+                            </div>
+                            <div class="music-credits-transport" role="group" aria-label="Credits playlist controls">
+                                <button type="button" class="music-credits-transport__btn music-credits-transport__btn--step" id="credits-transport-prev" aria-label="Previous track">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M14 5v14L5 12l9-7z"/></svg>
+                                </button>
+                                <button type="button" class="music-credits-transport__btn music-credits-transport__btn--play" id="credits-transport-play" aria-label="Play">
+                                    <svg class="music-credits-transport__i music-credits-transport__i--play" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+                                    <svg class="music-credits-transport__i music-credits-transport__i--pause" width="20" height="20" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 5h4v14H6V5zm8 0h4v14h-4V5z"/></svg>
+                                </button>
+                                <button type="button" class="music-credits-transport__btn music-credits-transport__btn--step" id="credits-transport-next" aria-label="Next track">
+                                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l9-7-9-7z"/></svg>
+                                </button>
+                            </div>
+                        </div>
+                        <ol class="music-tracklist music-tracklist--minimal" id="credits-playlist">
+                            <li data-track-index="0" data-released="2025-11-14">
+                                <button type="button" class="music-credit-play" aria-label="Play Keep Me in the Garden">
+                                    <svg class="music-credit-play__i music-credit-play__i--play" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+                                    <svg class="music-credit-play__i music-credit-play__i--pause" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 5h4v14H6V5zm8 0h4v14h-4V5z"/></svg>
+                                </button>
+                                <div class="music-credit-text">
+                                    <span class="music-credit-text__track">Keep Me in the Garden</span>
+                                    <span class="music-credit-text__artist">Rory Dinwoodie</span>
+                                </div>
+                                <a class="music-credit-spotify" href="https://open.spotify.com/track/1TwzcE1N7VFkAlsSg3ay2P" rel="noopener noreferrer" target="_blank" aria-label="Open Keep Me in the Garden on Spotify">↗</a>
+                            </li>
+                            <li data-track-index="1" data-released="2025-09-26">
+                                <button type="button" class="music-credit-play" aria-label="Play Green Mountain State">
+                                    <svg class="music-credit-play__i music-credit-play__i--play" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+                                    <svg class="music-credit-play__i music-credit-play__i--pause" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 5h4v14H6V5zm8 0h4v14h-4V5z"/></svg>
+                                </button>
+                                <div class="music-credit-text">
+                                    <span class="music-credit-text__track">Green Mountain State</span>
+                                    <span class="music-credit-text__artist">Rory Dinwoodie</span>
+                                </div>
+                                <a class="music-credit-spotify" href="https://open.spotify.com/track/2uI1liemd45f1vSnYabhNF" rel="noopener noreferrer" target="_blank" aria-label="Open Green Mountain State on Spotify">↗</a>
+                            </li>
+                            <li data-track-index="2" data-released="2025-05-31">
+                                <button type="button" class="music-credit-play" aria-label="Play Just Like You">
+                                    <svg class="music-credit-play__i music-credit-play__i--play" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+                                    <svg class="music-credit-play__i music-credit-play__i--pause" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 5h4v14H6V5zm8 0h4v14h-4V5z"/></svg>
+                                </button>
+                                <div class="music-credit-text">
+                                    <span class="music-credit-text__track">Just Like You</span>
+                                    <span class="music-credit-text__artist">Searching For Sergio</span>
+                                </div>
+                                <a class="music-credit-spotify" href="https://open.spotify.com/track/07TXXN0JHsLFR6oSFEITPq" rel="noopener noreferrer" target="_blank" aria-label="Open Just Like You on Spotify">↗</a>
+                            </li>
+                            <li data-track-index="3" data-released="2025-02-28">
+                                <button type="button" class="music-credit-play" aria-label="Play Parce que">
+                                    <svg class="music-credit-play__i music-credit-play__i--play" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+                                    <svg class="music-credit-play__i music-credit-play__i--pause" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 5h4v14H6V5zm8 0h4v14h-4V5z"/></svg>
+                                </button>
+                                <div class="music-credit-text">
+                                    <span class="music-credit-text__track">Parce que</span>
+                                    <span class="music-credit-text__artist">Harpie, Hendy, Tessera, Vic Valentine</span>
+                                </div>
+                                <a class="music-credit-spotify" href="https://open.spotify.com/track/3guORTZpFBeAoy963TadRL" rel="noopener noreferrer" target="_blank" aria-label="Open Parce que on Spotify">↗</a>
+                            </li>
+                            <li data-track-index="4" data-released="2025-02-14">
+                                <button type="button" class="music-credit-play" aria-label="Play Lisbon">
+                                    <svg class="music-credit-play__i music-credit-play__i--play" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+                                    <svg class="music-credit-play__i music-credit-play__i--pause" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 5h4v14H6V5zm8 0h4v14h-4V5z"/></svg>
+                                </button>
+                                <div class="music-credit-text">
+                                    <span class="music-credit-text__track">Lisbon</span>
+                                    <span class="music-credit-text__artist">Marianne Collective</span>
+                                </div>
+                                <a class="music-credit-spotify" href="https://open.spotify.com/track/1qho1ycAdjJQVQZ7SdyTeI" rel="noopener noreferrer" target="_blank" aria-label="Open Lisbon on Spotify">↗</a>
+                            </li>
+                            <li data-track-index="5" data-released="2024-11-07">
+                                <button type="button" class="music-credit-play" aria-label="Play Hypnotic">
+                                    <svg class="music-credit-play__i music-credit-play__i--play" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 5v14l11-7z"/></svg>
+                                    <svg class="music-credit-play__i music-credit-play__i--pause" width="14" height="14" viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6 5h4v14H6V5zm8 0h4v14h-4V5z"/></svg>
+                                </button>
+                                <div class="music-credit-text">
+                                    <span class="music-credit-text__track">Hypnotic</span>
+                                    <span class="music-credit-text__artist">Marianne Collective</span>
+                                </div>
+                                <a class="music-credit-spotify" href="https://open.spotify.com/track/2NHENv26qc6uGFafOxLMOm" rel="noopener noreferrer" target="_blank" aria-label="Open Hypnotic on Spotify">↗</a>
+                            </li>
+                        </ol>
+                    </article>
+
+                    <article class="music-block music-block--split-right music-block--monthly" id="monthly-pick">
+                        <h3 class="music-block__title">Monthly pick</h3>
+                        <p class="music-block__lead">One song, album, or artist I'm enjoying at the moment, updated each month.</p>
+                        <p class="music-month__when"><time datetime="2026-03">March 2026</time></p>
+                        <div class="music-month__card">
+                            <h4 class="music-month__name"><a href="https://open.spotify.com/track/05JotEfBnpBXdpnqjCIXYU" rel="noopener noreferrer" target="_blank">Supernatural Feelings — Remix</a></h4>
+                            <p class="music-month__album">The Flints, Night Tapes · Supernatural Feelings (Remix) (single, 2025)</p>
+                            <p class="music-month__note">Dreamy remix energy—open the player below or the title link on Spotify.</p>
+                            <div class="music-embed-slot music-embed-slot--compact">
+                                <iframe title="Spotify — Supernatural Feelings (Remix)" style="border-radius: 12px; width: 100%; max-width: 100%; height: 152px; border: 0;" src="https://open.spotify.com/embed/track/05JotEfBnpBXdpnqjCIXYU?utm_source=generator" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                            </div>
+                        </div>
+                    </article>
+                </div>
+
+                <article class="music-block music-block--gallery" id="audio-gallery">
+                    <h3 class="music-block__title">Audio clips</h3>
+                    <p class="music-block__lead">Demos, field recordings, and one-offs—hosted on the site.</p>
+                    <p class="music-audio-coming-soon" role="status">Coming soon</p>
+                </article>
+            </div>
+        </section>
+    </main>
+
+<!-- @include partials/footer.html -->
+<!-- @include partials/music-dock.html -->
+<!-- @include partials/lightbox.html -->
+<!-- @include partials/scripts.html -->
+    <script>
+    let __vvGigsLoadGen = 0;
+
+    async function loadMusicGigs() {
+        const gen = ++__vvGigsLoadGen;
+        const root = document.getElementById('music-gigs-list');
+        if (!root) return;
+        root.innerHTML = '<p class="music-gig-list__loading">Loading&hellip;</p>';
+        const client = await waitForSupabaseClient();
+        if (gen !== __vvGigsLoadGen) return;
+        if (!client) {
+            root.innerHTML = '<p class="music-gig-list__empty">Loading&hellip; If the content does not appear, reload the page.</p>';
+            return;
+        }
+        const { data: shows, error } = await client
+            .from('events')
+            .select('id, name, event_date, location')
+            .eq('is_published', true)
+            .eq('category', 'music')
+            .order('event_date', { ascending: false });
+        if (gen !== __vvGigsLoadGen) return;
+        if (error) {
+            root.innerHTML = '<p class="music-gig-list__empty">Could not load events. Run <code>scripts/events-music-public-rls.sql</code> in Supabase (RLS for <code>events</code>) and ensure rows are <code>is_published</code> and <code>category = music</code>.</p>';
+            return;
+        }
+        if (!shows || !shows.length) {
+            root.innerHTML = '<p class="music-gig-list__empty">No published events yet. Add rows in <code>events</code> with <code>category</code> set to <code>music</code> and <code>is_published</code> on.</p>';
+            return;
+        }
+
+        function startOfLocalDay(d) {
+            return new Date(d.getFullYear(), d.getMonth(), d.getDate());
+        }
+        function gigIsPast(iso) {
+            if (!iso) return false;
+            const ev = new Date(iso);
+            if (Number.isNaN(ev.getTime())) return false;
+            return startOfLocalDay(ev) < startOfLocalDay(new Date());
+        }
+
+        const upcoming = [];
+        const past = [];
+        shows.forEach(function (s) {
+            (gigIsPast(s.event_date) ? past : upcoming).push(s);
+        });
+        upcoming.sort(function (a, b) {
+            return new Date(a.event_date) - new Date(b.event_date);
+        });
+        past.sort(function (a, b) {
+            return new Date(b.event_date) - new Date(a.event_date);
+        });
+
+        function extractCityFromLocation(location) {
+            if (!location || typeof location !== 'string') return '';
+            const parts = location
+                .split(',')
+                .map(p => p.trim())
+                .filter(Boolean);
+            if (!parts.length) return '';
+
+            // Many rows store "venue + address + city" in `location`.
+            // We approximate "city" by dropping trailing country tokens (e.g. UK, France).
+            const countryHints = new Set([
+                'uk',
+                'us',
+                'usa',
+                'france',
+                'germany',
+                'spain',
+                'italy',
+                'ireland',
+                'canada',
+                'australia',
+                'new zealand',
+                'netherlands',
+                'sweden',
+                'norway',
+                'denmark',
+                'finland',
+                'belgium',
+                'switzerland',
+                'austria',
+                'portugal',
+                'greece',
+                'poland',
+                'japan',
+                'china',
+                'korea',
+                'singapore',
+                'hong kong',
+                'south africa',
+                'india',
+                'russia'
+            ]);
+
+            while (parts.length) {
+                const last = parts[parts.length - 1];
+                const lower = last.toLowerCase();
+                const looksLikeCountryAbbr = /^[A-Z]{2,4}$/.test(last);
+                if (looksLikeCountryAbbr || countryHints.has(lower)) {
+                    parts.pop();
+                    continue;
+                }
+                break;
+            }
+
+            const rawCity = parts[parts.length - 1] || '';
+            // Strip UK-style postcodes from the end of the city (e.g. "SE1 3QJ", "NW5 3HS", "E8 3AS").
+            const postcodeRegex = /\b[A-Z]{1,2}\d{1,2}[A-Z]?\s?\d[A-Z]{2}\b/i;
+            const cleaned = rawCity
+                .replace(postcodeRegex, '')
+                .replace(/\s{2,}/g, ' ')
+                .trim();
+            return cleaned || rawCity.trim();
+        }
+
+        function gigRowHtml(s, isPastRow) {
+            const when = formatDate(s.event_date);
+            const city = escHtml(extractCityFromLocation(s.location || ''));
+            const headline = escHtml(s.name || 'Event');
+            const dt = escHtml((s.event_date || '').slice(0, 16));
+            const side = isPastRow
+                ? '<span class="music-gig-row__past-label">Past</span>'
+                : `<a class="music-gig-row__btn" href="/audio/event/?id=${encodeURIComponent(s.id)}">Info</a>`;
+            return `
+            <article class="music-gig-row${isPastRow ? ' music-gig-row--past' : ''}"${isPastRow ? ' aria-label="Past show"' : ''}>
+                <div class="music-gig-row__text">
+                    <time class="music-gig-row__date" datetime="${dt}">${escHtml(when)}</time>
+                    <h4 class="music-gig-row__title">${headline}</h4>
+                    <p class="music-gig-row__meta">${city || '\u00a0'}</p>
+                </div>
+                ${side}
+            </article>`;
+        }
+
+        let html = upcoming.map(function (s) {
+            return gigRowHtml(s, false);
+        }).join('');
+
+        if (past.length) {
+            const hasMorePast = past.length > 2;
+            const viewClass =
+                'music-gig-past__viewport music-gig-past__viewport--collapsed' +
+                (hasMorePast ? ' music-gig-past__viewport--has-more' : '');
+            html +=
+                '<div class="music-gig-past">' +
+                '<h4 class="music-gig-past__heading">Past shows</h4>' +
+                `<div class="${viewClass}" data-past-viewport>` +
+                '<div class="music-gig-past__inner" data-past-inner>' +
+                past.map(function (s) {
+                    return gigRowHtml(s, true);
+                }).join('') +
+                '</div>' +
+                '<div class="music-gig-past__fade" aria-hidden="true"></div>' +
+                '</div>' +
+                (hasMorePast
+                    ? '<button type="button" class="music-gig-past__more" data-past-more>See more</button>'
+                    : '') +
+                '</div>';
+        }
+
+        root.innerHTML = html;
+
+        const pastViewport = root.querySelector('[data-past-viewport]');
+        const pastMoreBtn = root.querySelector('[data-past-more]');
+        if (pastViewport && pastMoreBtn) {
+            pastMoreBtn.addEventListener('click', function () {
+                const expanded = pastViewport.classList.toggle('music-gig-past__viewport--expanded');
+                pastViewport.classList.toggle('music-gig-past__viewport--collapsed', !expanded);
+                pastMoreBtn.textContent = expanded ? 'See less' : 'See more';
+            });
+        }
+    }
+    document.addEventListener('DOMContentLoaded', loadMusicGigs);
+    document.addEventListener('turbo:load', loadMusicGigs);
+    window.addEventListener('load', function () {
+        const root = document.getElementById('music-gigs-list');
+        if (!root || root.querySelector('.music-gig-row')) return;
+        const t = root.textContent || '';
+        if (root.querySelector('.music-gig-list__loading') || /If the content does not appear/i.test(t)) {
+            loadMusicGigs();
+        }
+    });
+    </script>
+</body>
+</html>
