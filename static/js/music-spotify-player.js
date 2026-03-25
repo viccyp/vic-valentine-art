@@ -4,6 +4,7 @@
  *
  * Tracks are read from #credits-playlist when that block exists (sorted by
  * data-released, newest first); otherwise DEFAULT_TRACKS keeps the embed usable site-wide.
+ * Monthly pick on the audio page uses `.music-month-pick__play[data-spotify-track-id]` (separate from the credits list).
  */
 if (typeof window !== 'undefined' && !window.__vvMusicSpotifyBundleLoaded) {
     window.__vvMusicSpotifyBundleLoaded = true;
@@ -21,6 +22,7 @@ if (typeof window !== 'undefined' && !window.__vvMusicSpotifyBundleLoaded) {
         var tracks = DEFAULT_TRACKS.slice();
         var controller = null;
         var currentIndex = -1;
+        var playingMonthlyPick = false;
         var lastPlayback = { isPaused: true, position: 0, duration: 0 };
         var embedCreated = false;
         var iframeApi = null;
@@ -74,8 +76,8 @@ if (typeof window !== 'undefined' && !window.__vvMusicSpotifyBundleLoaded) {
 
         function syncRowButtons(data) {
             var playingNow = data.isPaused === false;
-            $$('.music-credit-play').forEach(function (btn, i) {
-                var on = i === currentIndex;
+            $$('#credits-playlist .music-credit-play').forEach(function (btn, i) {
+                var on = !playingMonthlyPick && i === currentIndex;
                 var playing = on && playingNow;
                 btn.classList.toggle('music-credit-play--on', on);
                 btn.classList.toggle('music-credit-play--playing', playing);
@@ -83,9 +85,21 @@ if (typeof window !== 'undefined' && !window.__vvMusicSpotifyBundleLoaded) {
                 var name = t ? t.title : 'Track';
                 btn.setAttribute('aria-label', playing ? 'Pause ' + name : 'Play ' + name);
             });
+            var mpBtn = $('.music-month-pick__play');
+            if (mpBtn) {
+                var mOn = playingMonthlyPick;
+                var mPlaying = mOn && playingNow;
+                mpBtn.classList.toggle('music-credit-play--on', mOn);
+                mpBtn.classList.toggle('music-credit-play--playing', mPlaying);
+                var row = mpBtn.closest('.music-month-pick-row');
+                var trk = row && row.querySelector('.music-credit-text__track');
+                var mName = (trk && trk.textContent.trim()) || 'Monthly pick';
+                mpBtn.setAttribute('aria-label', mPlaying ? 'Pause ' + mName : 'Play ' + mName);
+            }
             var transportPlay = $('#credits-transport-play');
             if (transportPlay) {
-                var tPlaying = currentIndex >= 0 && playingNow;
+                var tPlaying =
+                    playingNow && (currentIndex >= 0 || playingMonthlyPick);
                 transportPlay.classList.toggle('music-credits-transport__btn--playing', tPlaying);
                 transportPlay.setAttribute('aria-label', tPlaying ? 'Pause' : 'Play');
             }
@@ -93,6 +107,7 @@ if (typeof window !== 'undefined' && !window.__vvMusicSpotifyBundleLoaded) {
 
         function resetDockUi() {
             expectPlayingAfterLoadUntil = 0;
+            playingMonthlyPick = false;
             lastPlayback = { isPaused: true, position: 0, duration: 0 };
             syncRowButtons({ isPaused: true });
         }
@@ -120,8 +135,35 @@ if (typeof window !== 'undefined' && !window.__vvMusicSpotifyBundleLoaded) {
             syncRowButtons({ isPaused: rowPaused });
         }
 
+        function playMonthlyPick(opts) {
+            opts = opts || {};
+            var btn = document.querySelector('.music-month-pick__play[data-spotify-track-id]');
+            var id = btn && btn.getAttribute('data-spotify-track-id');
+            if (!controller || !id) return;
+            if (opts.toggleIfSame && playingMonthlyPick) {
+                expectPlayingAfterLoadUntil = 0;
+                controller.togglePlay();
+                return;
+            }
+            playingMonthlyPick = true;
+            currentIndex = -1;
+            expectPlayingAfterLoadUntil = Date.now() + 1200;
+            syncRowButtons({ isPaused: false });
+            controller.loadUri(spotifyUri(id));
+            window.setTimeout(function () {
+                try {
+                    controller.resume();
+                } catch (_) {
+                    try {
+                        controller.play();
+                    } catch (_) { /* autoplay / embed quirks */ }
+                }
+            }, 150);
+        }
+
         function playIndex(i, opts) {
             opts = opts || {};
+            playingMonthlyPick = false;
             if (!controller || !tracks.length) return;
             var idx = ((i % tracks.length) + tracks.length) % tracks.length;
             var track = tracks[idx];
@@ -154,8 +196,8 @@ if (typeof window !== 'undefined' && !window.__vvMusicSpotifyBundleLoaded) {
             document.addEventListener('click', function (e) {
                 if (e.target.closest('#credits-transport-play')) {
                     if (!controller) return;
-                    if (currentIndex < 0) playIndex(0);
-                    else controller.togglePlay();
+                    if (currentIndex < 0 && !playingMonthlyPick) playIndex(0);
+                    else if (playingMonthlyPick || currentIndex >= 0) controller.togglePlay();
                     return;
                 }
                 if (e.target.closest('#credits-transport-prev')) {
@@ -168,6 +210,11 @@ if (typeof window !== 'undefined' && !window.__vvMusicSpotifyBundleLoaded) {
                     if (!controller) return;
                     if (currentIndex < 0) playIndex(0);
                     else playIndex(currentIndex + 1);
+                    return;
+                }
+                if (e.target.closest('.music-month-pick__play')) {
+                    if (!controller) return;
+                    playMonthlyPick({ toggleIfSame: true });
                     return;
                 }
                 var credBtn = e.target.closest('#credits-playlist .music-credit-play');

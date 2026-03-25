@@ -390,6 +390,26 @@ main {
     letter-spacing: 0.02em;
 }
 
+.hero.hero--split .hero__contact {
+    margin: clamp(1.35rem, 3.5vw, 1.85rem) 0 0;
+    max-width: 28em;
+    margin-left: auto;
+    text-align: right;
+    font-size: clamp(0.82rem, 1.45vw, 0.95rem);
+    letter-spacing: 0.04em;
+}
+
+.hero.hero--split .hero__contact a {
+    color: var(--color-text-muted);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+    transition: color 0.2s;
+}
+
+.hero.hero--split .hero__contact a:hover {
+    color: var(--color-text);
+}
+
 /* ── Section ──────────────────────────────────────────────────── */
 
 .section {
@@ -587,6 +607,24 @@ main {
 .music-embed-slot iframe {
     display: block;
     margin: 0 auto;
+}
+
+/* Monthly pick: same ingredients as credits row, custom container */
+.music-month-pick-row {
+    display: flex;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 0.45rem 0.65rem;
+    margin-top: 1.15rem;
+    padding: 0.5rem 0 0;
+    border-top: 1px solid var(--color-border);
+    min-height: 2.5rem;
+    font-size: 0.82rem;
+}
+
+.music-month__album cite {
+    font-style: normal;
+    color: var(--color-text);
 }
 
 .music-credits-header {
@@ -1591,6 +1629,26 @@ main {
 }
 
 /* ── Blog / photoblog post (Wix-style article) ─────────────────── */
+
+.photoblog-post__back {
+    margin: 0 0 1.25rem;
+}
+
+.photoblog-post__back-link {
+    display: inline-block;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    border-bottom: 1px solid transparent;
+    transition: color 0.2s, border-color 0.2s;
+}
+
+.photoblog-post__back-link:hover {
+    color: var(--color-text);
+    border-color: var(--color-text-muted);
+}
 
 .photoblog-post__header {
     padding-top: calc(var(--nav-height) + 3rem);
@@ -3055,6 +3113,10 @@ body.home .hero.hero--split .hero__intro {
     text-shadow: 0 1px 24px rgba(0, 0, 0, 0.65);
 }
 
+body.home .hero.hero--split .hero__contact a {
+    text-shadow: 0 1px 20px rgba(0, 0, 0, 0.6);
+}
+
 body.home .home-enter-bar {
     position: relative;
     z-index: 1;
@@ -3263,6 +3325,12 @@ body.home .footer {
     }
 
     .hero.hero--split .hero__intro {
+        margin-left: auto;
+        margin-right: auto;
+        text-align: center;
+    }
+
+    .hero.hero--split .hero__contact {
         margin-left: auto;
         margin-right: auto;
         text-align: center;

@@ -11,12 +11,16 @@
         return p;
     }
 
+    function isPostPath(p) {
+        return p === '/post/' || p.startsWith('/post/');
+    }
+
     function pageNavSlot(pathname) {
         const p = normPath(pathname);
         if (/^\/admin(\/|$)/i.test(p)) return -1;
         const exact = ORDER.indexOf(p);
         if (exact >= 0) return exact;
-        if (p.startsWith('/post/')) return 4;
+        if (isPostPath(p)) return 4;
         if (p.startsWith('/audio/event/')) return 2;
         if (p.startsWith('/audio/')) return 2;
         if (p.startsWith('/visual/')) return 1;
@@ -28,7 +32,22 @@
     function init() {
         const root = document.getElementById('page-nav-arrows');
         if (!root) return;
-        const slot = pageNavSlot(window.location.pathname);
+        const pathname = window.location.pathname;
+        const p = normPath(pathname);
+        const prevA = root.querySelector('.page-nav-arrows__link--prev');
+        const nextA = root.querySelector('.page-nav-arrows__link--next');
+        if (!prevA || !nextA) return;
+
+        if (isPostPath(p)) {
+            prevA.href = '/mag/';
+            nextA.href = '/';
+            prevA.setAttribute('aria-label', 'Back — Mag');
+            nextA.setAttribute('aria-label', 'Forward — Home');
+            root.removeAttribute('hidden');
+            return;
+        }
+
+        const slot = pageNavSlot(pathname);
         if (slot < 0 || slot === 0) {
             root.setAttribute('hidden', '');
             return;
@@ -36,9 +55,6 @@
         const n = ORDER.length;
         const prevIdx = (slot - 1 + n) % n;
         const nextIdx = (slot + 1) % n;
-        const prevA = root.querySelector('.page-nav-arrows__link--prev');
-        const nextA = root.querySelector('.page-nav-arrows__link--next');
-        if (!prevA || !nextA) return;
         prevA.href = ORDER[prevIdx];
         nextA.href = ORDER[nextIdx];
         prevA.setAttribute('aria-label', `Back — ${LABELS[prevIdx]}`);

@@ -22,7 +22,7 @@
             <div class="nav__spacer" aria-hidden="true"></div>
             <div class="nav__center">
                 <div class="nav__links">
-                    <a href="/">Home</a>
+                    <a href="/" data-turbo="false">Home</a>
                     <a href="/visual/">Visual</a>
                     <a href="/audio/">Audio</a>
                     <a href="/code/">Code</a>
@@ -126,6 +126,7 @@
         el.innerHTML = `
             <header class="photoblog-post__header">
                 <div class="container container--narrow">
+                    <p class="photoblog-post__back"><a href="/mag/" class="photoblog-post__back-link">Back to Mag</a></p>
                     <h1 class="photoblog-post__title">${escHtml(post.title)}</h1>
                     <div class="photoblog-post__meta">
                         <span class="photoblog-post__author">Vic Valentine</span>

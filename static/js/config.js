@@ -277,7 +277,7 @@ function initActiveNav() {
         if (
             hrefKey === pathKey ||
             (hrefKey === '/audio' && pathKey.startsWith('/audio')) ||
-            (hrefKey === '/mag' && pathKey.startsWith('/post'))
+            (hrefKey === '/mag' && (pathKey === '/post' || pathKey.startsWith('/post/')))
         ) {
             a.classList.add('active');
         }
